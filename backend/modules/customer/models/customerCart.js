@@ -30,7 +30,7 @@ const cartSchema = new mongoose.Schema(
 
         quantity: { type: Number, required: true, min: 1 },
 
-        price: { type: Number, required: true }, // snapshot
+        price: { type: Number, required: true }, 
 
         total: { type: Number, required: true }, // quantity * price
     },

@@ -1,6 +1,7 @@
 import Product from '../models/productsModel.js'
 import Vendor from '../models/vendorModel.js'
 import VendorOrder from '../models/venderwiseOrder.js'
+import OrderItem from '../models/orderItem.js'
 
 export const addProduct =async(req,res)=>{
     try{
@@ -69,7 +70,7 @@ const product = await Product.create({
 export const getAllproducts = async(req,res)=>{
     try{
    const products = await Product.find().populate("vendor_id","shopName email mobile").sort({ createdAt: -1});
-   res.status("200").json({success:true,count:products.length,products})
+   res.status(200).json({success:true,count:products.length,products})
     }
         catch(error){
         res.status(500).json({success:false,message:"server error",error:error.message})
@@ -119,7 +120,7 @@ export const deleteProduct = async(req,res)=>{
         })
     }
 };
-/////get products endorwise
+/////get products vendorwise
 export const getvendorwiseProduct = async(req,res)=>{
     try{
      const {vendorId} =req.params;
@@ -227,5 +228,44 @@ export const getVendorbyId =async(req,res)=>{
     catch(error){
          res.status(500).json({message:"Server error", error: error.message});   
 }
+};
+
+////////////////SALES REPORT 
+ export const productWiseSalesReport = async(req,res)=>{
+  try{
+ const { from,to,vendor_id,category} = req.body;
+ const match ={};
+ if(from || to) match.createdAt ={};
+ if(from) match.createdAt.$gte = new Date(from);
+ if(to)  match.createdAt.$lte = new Date(to);
+
+ if(vendor_id) match.vendor_id = new mongoose.Types.ObjectId(vendor_id);
+if(category) match.category = category;
+/////Delivered only for sales
+
+match.orderStatus ="delivered";
+const report = await OrderItem.aggregate([
+  {$match:match},
+  {
+    $group:{
+      _id:"$product_id",
+       productName: { $first: "$productName" },
+          category: { $first: "$category" },
+          vendor_id: { $first: "$vendor_id" },
+          qtySold: { $sum: "$quantity" },
+          netSales: { $sum: "$total" },
+    },
+  },
+ { $sort: { netSales: -1 } },
+]);
+ res.status(200).json({ success: true, report });
+
+  }
+ catch(error){
+  res.status(500).json({message:"Server error", error: error.message});   
 }
+ 
+ };
+
+
 

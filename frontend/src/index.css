@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+
+
+/*  Light Mode (default) */
+:root {
+  --primary: #faf9f9;
+  --secondary: #fcfcfc;
+  --accent: #00ADB5;
+  --text: #222831;
+
+}
+
+body {
+  font-family:  sans-serif !important;
+  overflow-x:hidden;
+}
+
+/*  Dark Mode */
+.dark {
+  --primary: #222831;
+  --secondary: #393E46;
+  --accent: #00ADB5;
+  --text: #fcfcfc;
+}

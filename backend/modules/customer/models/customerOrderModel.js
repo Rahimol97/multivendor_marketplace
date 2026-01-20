@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const oderSchema = new mongoose.Schema(
     {
    orderNumber :{
-    type:String,unique:true,required:true
+    type:String,unique:true,required:true,index:true
    },
    user_id:{
     type:mongoose.Schema.Types.ObjectId,
@@ -15,11 +15,11 @@ const oderSchema = new mongoose.Schema(
     ref:"Customer",
      required: true,
    },
-   totalItems:Number,
-   subTotal:Number,
-   tax:Number,
-   discount:Number,
-   grandTotal:Number,
+   totalItems:{ type: Number, default: 0 },
+   subTotal:{ type: Number, default: 0 },
+   tax:{ type: Number, default: 0 },
+   discount:{ type: Number, default: 0 },
+   grandTotal:{ type: Number, default: 0 },
 
    paymentMethod:{
     type:String,
