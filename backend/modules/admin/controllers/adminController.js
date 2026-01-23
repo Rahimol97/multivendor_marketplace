@@ -7,7 +7,7 @@ import VendorCommission from "../models/vendorwiseCommissionModel.js"
 export const getadminDashboardStats =async(req,res)=>{
     try{
        const customerCount  = await Customer.countDocuments({ isActive: true })
-       const vendorCount = await Vendor.countDocuments({ status: "approved" })
+       const vendorCount = await Vendor.countDocuments({ status: "approved",isActive:true })
        const pendingVendors= await Vendor.countDocuments({status:"pending"})
        const activeVendors =await Vendor.find({isActive:true,status:"approved"}).sort({ lastLoginAt: -1 }).limit(5).select("shopName vendorName lastLoginAt")
       //////today sales amount
@@ -139,8 +139,41 @@ const vendor = await Vendor.findByIdAndUpdate(id,{status,isActive: status === "a
 ////fetch all customers list
 export const getAllCustomers =async(req,res)=>{
     try{
-  const customers = await Customer.find().populate("user_id","username customerName  mobile address email role isActive createdAt");
-  res.status(200).json({ success: true, data: customers});
+  const search = req.query.search || "";
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const skip = (page -1) * limit;
+  //search query
+  let searchcustomers = {};
+  let  customerquery ={};
+if(search.trim() !==""){
+  const user =await User.find({
+    $or:[
+      {username :{$regex :search,$options:"i"}},
+      { email: { $regex: search, $options: "i" } },
+    ],
+  }).select("_id");
+  const userid = user.map((u)=>u._id);
+     customerquery = {
+        $or: [
+          { customerName: { $regex: search, $options: "i" } },
+          { mobile: { $regex: search, $options: "i" } },
+          { user_id: { $in: userid } }
+        ],
+      };
+}
+
+///total customer count 
+const totalcustomers = await Customer.countDocuments(customerquery);
+ ///customer list
+const customers = await Customer.find(customerquery).populate("user_id", "username email isActive").sort({ createdAt: -1 }).skip(skip).limit(limit);
+  res.status(200).json({ success: true, customers,  pagination: {
+        totalcustomers,
+        page,
+        limit,
+        totalPages: Math.ceil(totalcustomers / limit),
+      },});
 }
   catch(error){
     res.status(500).json({success: false,message:error.message});  
@@ -149,8 +182,41 @@ export const getAllCustomers =async(req,res)=>{
 /////fetch all vendors list
 export const getAllVendors= async(req,res)=>{
     try{
-const vendors =await Vendor.find().populate("user_id","username email role isActive createdAt");
-  res.status(200).json({ success: true, data: vendors});    
+  const search = req.query.search || "";
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+ const skip = (page-1) *limit;
+ let searchvendors ={};
+ let vendorquery = { status: "approved" };
+ if(search.trim() !== ""){
+   const user = await User.find({
+    $or:[
+      {username :{$regex :search,$options:"i"}},
+      { email: { $regex: search, $options: "i" } },
+    ],
+  }).select("_id");
+  const userid = user.map((u)=>u._id);
+  vendorquery={
+    $or:[
+      {
+        ShopName:{$regex :search,$options:"i"}
+      },
+          { mobile: { $regex: search, $options: "i" } },
+          { user_id: { $in: userid } },
+          
+    ]
+  }
+
+ }
+const totalvendors = await Vendor.countDocuments(vendorquery);
+ ///vendor list
+const vendors = await Vendor.find(vendorquery).populate("user_id", "username email isActive").sort({ createdAt: -1 }).skip(skip).limit(limit);
+  res.status(200).json({ success: true, vendors,  pagination: {
+        totalvendors,
+        page,
+        limit,
+        totalPages: Math.ceil(totalvendors / limit),
+      },});
 }
       catch(error){
     res.status(500).json({success: false,message:error.message});  
@@ -159,31 +225,26 @@ const vendors =await Vendor.find().populate("user_id","username email role isAct
 /////block  vendor/customer
 export const blockUser = async(req,res)=>{
     try{
-        const {id} = req.params;
-const user = await User.findByIdAndUpdate(id,{ isActive: false },
+        const id = req.params.id;
+        //customer find
+        const user = await User.findById(id);
+        if(!user){
+            return res.status(404).json({success:false,message:"user not found"});
+        }
+        //toggle (block/unblock)
+        const newstatus = !user.isActive;
+const statusupdte = await User.findByIdAndUpdate(id,{ isActive: newstatus },
     { new: true });
-   await Customer.updateOne({ user_id: id },{$set:{isActive: false}});
-   await Vendor.updateOne({ user_id: id },{$set:{isActive: false}});
-   res.status(200).json({ success: true, message: "User blocked", data: user });
+    ///update customer
+   await Customer.updateOne({ user_id: id },{$set:{isActive: newstatus}});
+   await Vendor.updateOne({ user_id: id },{$set:{isActive: newstatus}});
+   res.status(200).json({ success: true, message:  newstatus ? "User unblocked" : "User blocked", data: statusupdte });
 
 }
       catch(error){
     res.status(500).json({success: false,message:error.message});  
     }
 };
-////unblock user
-export const unblockUser = async(req,res)=>{
-    try{
-   const {id} =req.params;
-const user = await User.findByIdAndUpdate(id,{ isActive: true },
-    { new: true });
-       await Customer.updateOne({ user_id: id },{$set:{isActive: true}});
-   await Vendor.updateOne({ user_id: id },{$set:{isActive: true}});
-   res.status(200).json({ success: true, message: "User unblocked", data: user });
-    }
-     catch(error){
-    res.status(500).json({success: false,message:error.message});  
-    }
-};
+
 
 

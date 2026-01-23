@@ -13,7 +13,7 @@ const vendorSchema =new mongoose.Schema(
             pincode:String
         }],
         status:{type:String,enum:["pending", "approved", "rejected"],  default: "pending"},
-        isActive:{type:Boolean,default:false},
+        isActive:{type:Boolean,default:false,index:true},
         lastLoginAt: {type: Date},
         commissionPercentage:{type:Number,default:10}
     },

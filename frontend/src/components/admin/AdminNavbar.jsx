@@ -13,8 +13,8 @@ function AdminNavbar({ collapsed, setCollapsed, setMobileOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   return (
-    <header className='w-full bg-(--secondary) text-(--text) border-b border-b-slate-200  '>
-      <div className='px-4 md:px-6 py-7 flex items-center justify-between'>
+    <header className='w-full min-w-0 bg-(--secondary) text-(--text) border-b border-b-slate-200  '>
+      <div className='px-4 md:px-6 py-7 flex items-center justify-between w-full min-w-0'>
         <div className="flex items-center gap-3">
           <button
             className="md:hidden text-(--accent)"

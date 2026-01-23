@@ -51,7 +51,7 @@ const handleConfirmAction = async () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="w-full p-3">
         <h1 className="text-xl font-semibold text-(--text)">
           Vendor Approvals
         </h1>
@@ -61,15 +61,16 @@ const handleConfirmAction = async () => {
       </div>
 
       {/* Table Card */}
-      <div className="  bg-(--secondary) rounded-xl shadow-md overflow-hidden">
-        <table className="w-full text-sm">
+      <div className=" w-full min-w-0 bg-(--secondary) rounded-xl shadow-md overflow-hidden">
+     <div className="w-full overflow-x-auto">
+        <table className="w-full  text-sm">
           <thead className="bg-gray-50">
             <tr className="text-left text-(--text)">
-              <th className="px-6 py-4">Vendor</th>
-              <th>Shop Name</th>
-              <th>created date</th>
-              <th>Status</th>
-              <th className="text-right px-6">Actions</th>
+              <th className="px-4 py-3">Vendor</th>
+              <th  className="px-4 py-3">Shop Name</th>
+              <th  className="px-4 py-3">created date</th>
+              <th  className="px-4 py-3">Status</th>
+              <th className="text-center px-6">Actions</th>
             </tr>
           </thead>
 
@@ -123,6 +124,7 @@ const handleConfirmAction = async () => {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
       {/* confirmation box */}
 <ConfirmModal

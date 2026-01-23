@@ -8,7 +8,7 @@ function AdminLayouts() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-(--primary) text-(--text)">
+    <div className="flex w-full min-h-screen bg-(--primary) text-(--text) overflow-hidden">
       
       {/* Sidebar */}
       <AdminSidebar
@@ -18,14 +18,14 @@ function AdminLayouts() {
       />
 
       {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex flex-col flex-1 min-w-0">
         <AdminNavbar
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           setMobileOpen={setMobileOpen}
         />
 
-        <main className="p-6">
+        <main className="p-6 flex-1 min-w-0 overflow-hidden">
           <Outlet />
         </main>
       </div>

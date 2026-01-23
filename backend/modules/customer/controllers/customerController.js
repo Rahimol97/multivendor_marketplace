@@ -193,8 +193,38 @@ export const createOrder = async (req, res) => {
 //fetch all main orders
 export const getallOrders = async(req,res)=>{
     try{
-const orders = await Order.find().populate("user_id","username email").populate("customer_id","customerName mobile").sort({createdAt: -1});
-res.status(200).json({message:"Orders fetched successfully", orders });
+const {fdate,tdate,page,limit} = req.query;
+let filter ={};
+if(fdate && tdate){
+  const start = new Date(fdate);
+  const end    = new Date(tdate);
+  end.setHours(23, 59, 59, 999);
+  filter.createdAt ={$gte : start,$lte:end};
+
+}
+const skip = (page - 1) *limit;
+const totalorders = await Order.countDocuments(filter);
+const orders = await Order.find(filter)
+.populate("user_id" , "username").populate("customer_id","customerName")
+.sort({createdAt:-1}).skip(skip).limit(limit).lean();
+
+const orderids = orders.map((ids)=>ids._id);
+ const orderitems = await OrderItem.find({order_id:{$in:orderids}}).populate("product_id", "name price sku").populate("vendor_id","shopName").lean();
+const orderwithitems = await orders.map((order)=>{
+  return {
+    ...order,items:orderitems.filter((item)=>item.order_id.toString()===order._id.toString()),
+  };
+});
+ res.status(200).json({message:"Orders fetched successfully",
+   orders:orderwithitems,
+  pagination:{
+    totalorders,
+    totalpages:Math.ceil(totalorders/limit),
+    currentpage:page,
+    limit
+  },
+  
+  });
 }
     catch(error){
         res.status(500).json({ message: "Server error", error: error.message })

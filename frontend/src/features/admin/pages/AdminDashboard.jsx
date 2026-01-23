@@ -28,6 +28,7 @@ todayOrders();
 //refresh every 5 second
 const interval = setInterval(() => {
  getDashboardStat(); 
+ todayOrders();
 }, 5000);
 return () => clearInterval(interval); // cleanup
  

@@ -8,6 +8,7 @@ import Commission from "../features/admin/pages/Commission";
 import UserVendorManager from "../features/admin/pages/UserVendorManager";
 import Orders from "../features/admin/pages/Orders";
 import Reports from "../features/admin/pages/Reports";
+import Venderorders from "../features/admin/pages/Vendororders";
 
 export const router = createBrowserRouter([
 {
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
         {path:"/admin/commission",element:<Commission />},
         {path:"/admin/accounts",element:<UserVendorManager />},
         {path:"/admin/orders",element:<Orders />},
+        {path:"/admin/vendororders",element:<Venderorders />},
         {path:"/admin/reports",element:<Reports />},
 
 

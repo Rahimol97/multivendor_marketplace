@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { NavLink } from "react-router-dom";
 import {
   HomeIcon,
@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
+ const [ordersOpen, setOrdersOpen] = useState(false);
   const menuItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg text-base font-medium transition
      ${
@@ -37,7 +38,7 @@ function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
     transform transition-all duration-300 ease-in-out
     ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
     md:translate-x-0
-    ${mobileOpen ? "w-80" : collapsed ? "w-20" : "w-80"}
+   ${collapsed ? "md:w-20" : "md:w-80"} w-80
   `}
 >
         {/* Header */}
@@ -84,10 +85,40 @@ function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
             {!collapsed && "User / Vendor Management"}
           </NavLink>
 
-          <NavLink to="/admin/orders" className={menuItemClass} onClick={() => setMobileOpen(false)}>
+        {/* orders */}
+        <div >
+          <button onClick={()=>setOrdersOpen(!ordersOpen)}
+             className={`${menuItemClass} w-full justify-between `}
+            >
+        <div className="flex items-center gap-3 cursor-pointer hover:text-(--accent) ">
+          <ClipboardDocumentListIcon className="w-6 h-6" />
+          {!collapsed && <span>Orders</span>}
+        </div>
+          </button>
+          {ordersOpen && !collapsed && (
+        <div className="ml-6 mt-3 flex flex-col  gap-3">
+          <NavLink
+           to="/admin/orders"
+            className={menuItemClass}
+            onClick={() => setMobileOpen(false)}
+          >
+            All Orders
+          </NavLink>
+
+          <NavLink
+            to="/admin/vendororders"
+           className={menuItemClass} onClick={() => setMobileOpen(false)}
+          >
+            Vendor Wise Orders
+          </NavLink>
+        </div>
+      )}
+        </div>
+
+          {/* <NavLink to="/admin/orders" className={menuItemClass} onClick={() => setMobileOpen(false)}>
             <ClipboardDocumentListIcon className="w-6 h-6" />
             {!collapsed && "Orders"}
-          </NavLink>
+          </NavLink> */}
 
           <NavLink to="/admin/reports" className={menuItemClass} onClick={() => setMobileOpen(false)}>
             <ChartBarIcon className="w-6 h-6" />

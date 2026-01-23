@@ -11,8 +11,7 @@ const customerSchema =new mongoose.Schema(
             state:String,
             pincode:String
         }],
-       
-        isActive:{type:Boolean,default:true},
+        isActive:{type:Boolean,default:true,index:true},
         lastLoginAt: {type: Date}
     },
   
