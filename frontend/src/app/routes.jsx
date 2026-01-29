@@ -21,7 +21,7 @@ import Authvendor from "../components/authentication/Authvendor";
 import Authcustomer from "../components/authentication/Authcustomer";
 export const router = createBrowserRouter([
 {
-    path:"/admin",
+    path:"/",
     element:<AdminLayouts/>,
     children:[
         {index:true,element:<AdminDashboard/>},
