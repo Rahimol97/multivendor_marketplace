@@ -1,5 +1,6 @@
-import express from 'express'
 import dotenv from 'dotenv'
+dotenv.config();
+import express from 'express'
 import mongoose from 'mongoose'
 import connectDB from "./config/db.js"
 import userRoutes from "./modules/admin/routes/userRoutes.js"
@@ -10,8 +11,6 @@ import vendorRoutes from "./modules/vendor/routes/vendorRoutes.js"
 import {authMiddleware,authorizeRoles} from './middlewares/authmiddleware.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-
-dotenv.config();
 connectDB();
 const app = express();
 app.use(cookieParser());

@@ -186,7 +186,7 @@ const limitc =1;
               ))}
               {vendors.length === 0 && (
                 <tr>
-                  <td colspan="5" className="px-4 py-6 text-center text-(--text) "> No vendors found</td>
+                  <td colSpan="5" className="px-4 py-6 text-center text-(--text) "> No vendors found</td>
                 </tr>
               )}
             </tbody>

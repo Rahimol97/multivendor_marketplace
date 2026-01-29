@@ -13,7 +13,7 @@ import {
   RectangleGroupIcon 
 } from "@heroicons/react/24/outline";
 
-function AdminNavbar({ collapsed, setCollapsed, setMobileOpen }) {
+function VendorNavbar({ collapsed, setCollapsed, setMobileOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { user,setUser, loading }= useAuth();
@@ -23,12 +23,9 @@ if (loading) return null;
    
     await api.post("/users/logout");
     setUser(null);
-    navigate("/admin/authadmin");
+    //navigate("/admin/authadmin");
   }
 
-  const subadminregister =()=>{
-    navigate("/admin/authadmin?mode=subadmin");
-  }
   return (
     <header className='w-full min-w-0 bg-(--secondary) text-(--text) border-b border-b-slate-200  '>
       <div className='px-4 md:px-6 py-7 flex items-center justify-between w-full min-w-0'>
@@ -55,7 +52,6 @@ if (loading) return null;
 
         {/* DESKTOP RIGHT */}
         <div className="hidden md:flex items-center gap-3 cursor-pointer">
-        <button onClick={subadminregister} className="bg-(--accent) px-4 py-2 text-(--secondary) rounded-2xl hover:text-amber-300 cursor-pointer">subadmin</button>
           <div className="relative">
             <button
               onClick={() => setProfileOpen(!profileOpen)}
@@ -102,4 +98,4 @@ if (loading) return null;
   )
 }
 
-export default AdminNavbar
+export default VendorNavbar

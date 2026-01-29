@@ -3,11 +3,7 @@ import User from '../modules/admin/models/adminModel.js'
 
 export const authMiddleware = async(req,res,next)=>{
     try{
-//    const header = req.headers.authorization;
-//    if(!header){
-//     return res.status(401).json({message:" Access denied. Token not provided"});
-//    }
-   //const token = header.split(" ")[1];
+
 const token = req.cookies.token;
 if(!token)
 {

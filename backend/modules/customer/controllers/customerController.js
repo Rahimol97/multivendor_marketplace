@@ -4,6 +4,7 @@ import Product from '../../vendor/models/productsModel.js'
 import Customer from '../models/customerModel.js'
 import OrderItem from '../../vendor/models/orderItem.js'
 import mongoose from 'mongoose'
+import orderItem from '../../vendor/models/orderItem.js'
 
 export const createOrder = async (req, res) => {
   const session = await mongoose.startSession();
@@ -231,24 +232,103 @@ const orderwithitems = await orders.map((order)=>{
     }
 };
 //get order with vendor order
-export const getOrderbyId = async(req,res)=>{
+export const getvendororders = async(req,res)=>{
     try{
-        const {id} =req.params;
-const order = await Order.findById(id).populate("user_id","username email") .populate("customer_id", "customerName mobile");
- if(!order) {
-     return res.status(404).json({ message: "Order not found" });
- }  
- const vendorOrders  = await VendorOrder.find({order_id:id}).populate("vendor_id", "vendorName shopName email").populate("items.product_id", "productName price");
- res.status(200).json({
-      message: "Order fetched successfully",
-      order,
-      vendorOrders,
-    });
-}
+        const {fdate,tdate,vendorid,page,limit} =req.query;
+
+         let orderfilter={};
+         let itemfilter ={};
+         if(fdate && tdate){
+          const start = new Date(fdate);
+          const end = new Date(tdate);
+          end.setHours(23,59,59,999);
+          orderfilter.createdAt={$gte:start,$lte:end};
+         }
+         if(vendorid){
+          itemfilter.vendor_id = vendorid;
+         }
+         const skip =(page-1)*limit;
+         //get orders date wise
+         const orders = await Order.find(orderfilter).populate("customer_id","customerName").sort({createdAt:-1}).skip(skip).limit(limit).lean();
+         const orderids = orders.map((order)=>order._id);
+          //get order items vendor wise
+          const orderitems  = await OrderItem.find({order_id:{$in:orderids},...itemfilter})
+          .populate("product_id","name price sku").lean();
+      
+          const orderwithitems= [];
+          for(const order of orders){
+            const items = orderitems.filter((item)=>item.order_id.toString()===order._id.toString());
+            if(items.length>0){
+              orderwithitems.push({
+                ...order,
+                orderitems:items,
+              });
+            }
+          }
+            const totalorders = orderwithitems.length;
+   res.status(200).json({message:"Orders fetched successfully",
+   orders:orderwithitems,
+  pagination:{
+    totalorders,
+    totalpages:Math.ceil(totalorders/limit),
+  },
+  
+  });
+
+          
+        }   
     catch(error){
         res.status(500).json({message:"Server error", error: error.message})
     }
 };
+///////////orderwisetracking
+export const getorderwisetrack = async(req,res)=>{
+  try{
+ const{fdate,tdate,orderstatus,page,limit} =req.query;
+ const orderfilter ={};
+ const itemfilter ={};
+ if(fdate && tdate){
+  const start = new Date(fdate);
+  const end = new Date(tdate);
+  end.setHours(23,59,59,999);
+  orderfilter.createdAt={$gte:start,$lte:end};
+ }
+ if(orderstatus){
+  itemfilter.orderStatus = orderstatus;
+ }
+ const skip = (page-1)*limit;
+ const orders = await Order.find(orderfilter).populate("customer_id","customerName").sort({createdAt:-1}).skip(skip).limit(limit).lean();
+ const orderids =orders.map((order)=>order._id);
+ const orderitems=await OrderItem.find({order_id:{$in:orderids},...itemfilter})
+ .populate("product_id", "name price sku").lean();
+const orderwithitems =[];
+for(const order of orders){
+  const items = await orderitems.filter((item)=>item.order_id.toString()===order._id.toString())
+  if(items.length>0){
+              orderwithitems.push({
+                ...order,
+                orderitems:items,
+              });
+            }
+}
+   const totalorders = orderwithitems.length;
+   res.status(200).json({message:"Orders fetched successfully",
+   orders:orderwithitems,
+  pagination:{
+    totalorders,
+    totalpages:Math.ceil(totalorders/limit),
+  },
+  
+  });
+
+
+  }
+  catch(error){
+  res.status(500).json({message:"Server error", error: error.message})
+    }
+
+}
+
 
 ///delete orders
 export const deleteOrders = async(req,res)=>{

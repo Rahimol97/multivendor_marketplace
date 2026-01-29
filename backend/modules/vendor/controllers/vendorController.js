@@ -11,7 +11,6 @@ export const addProduct =async(req,res)=>{
       description,
       category,
       brand,
-      images,
       price,
       discountPercent,
       stock,
@@ -29,17 +28,24 @@ export const addProduct =async(req,res)=>{
 
     const existingsku = await Product.findOne({sku})
    if(existingsku){
-     return res.status(201).json({
+     return res.status(400).json({
       success: false,
       message: "SKU already exists"
     });
    }
 
+   const parsedprice = Number(price);
+   const parseddiscount =  Number(discountPercent) ||0;
+   const parsedstock = Number(stock);
    //calculate discounted price
-    let discountedPrice = price;
-    if (discountPercent && discountPercent > 0) {
-      discountedPrice = price - (price * discountPercent) / 100;
-    }
+ 
+   const discountedPrice = parsedprice - (parsedprice * parseddiscount) / 100;
+     //  Get images from Cloudinary upload
+    const images = req.files?.map(file => ({
+      url: file.path,       // Cloudinary URL
+      public_id: file.filename,
+    })) || [];
+
 //add product table
 const product = await Product.create({
     vendor_id,
@@ -48,10 +54,10 @@ const product = await Product.create({
       category,
       brand,
       images,
-      price,
-      discountPercent: discountPercent || 0,
+      price:parsedprice,
+      discountPercent: parseddiscount,
       discountedPrice,
-      stock,
+      stock:parsedstock,
       sku,
       isActive: isActive ?? true, 
 });

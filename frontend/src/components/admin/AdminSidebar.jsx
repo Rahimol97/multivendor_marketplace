@@ -111,6 +111,12 @@ function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
           >
             Vendor Wise Orders
           </NavLink>
+              <NavLink
+            to="/admin/ordertrack"
+           className={menuItemClass} onClick={() => setMobileOpen(false)}
+          >
+           Order Tracking
+          </NavLink>
         </div>
       )}
         </div>

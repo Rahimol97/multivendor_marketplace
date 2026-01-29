@@ -245,6 +245,16 @@ const statusupdte = await User.findByIdAndUpdate(id,{ isActive: newstatus },
     res.status(500).json({success: false,message:error.message});  
     }
 };
+////////get all vendors
+export const getvendorslist = async(req,res)=>{
+  try{
+  const vendors = await Vendor.find({status:"approved"}).select("_id user_id shopName");
+  res.status(200).json({ success: true, vendors });
+}
+    catch(error){
+    res.status(500).json({success: false,message:error.message});  
+    }
 
+}
 
 

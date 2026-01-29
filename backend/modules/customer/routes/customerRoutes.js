@@ -1,11 +1,12 @@
 import express from 'express'
-import { createOrder,getallOrders,getOrderbyId,deleteOrders,updateCustomerprofile,getCustomerbyId,
-    getTodayOrderlist} from '../controllers/customerController.js'
+import { createOrder,getallOrders,deleteOrders,updateCustomerprofile,getCustomerbyId,
+    getTodayOrderlist,getvendororders,getorderwisetrack} from '../controllers/customerController.js'
 
 const router = express.Router();
 router.post("/orders", createOrder);
 router.get("/orders", getallOrders);
-router.get("/orders/:id", getOrderbyId);
+router.get("/vendorwiseorders", getvendororders);
+router.get("/ordertrack", getorderwisetrack)
 router.delete("/orders/:id", deleteOrders);
 router.put("/updateprofile", updateCustomerprofile);
 router.get("/getprofile", getCustomerbyId);

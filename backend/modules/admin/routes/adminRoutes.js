@@ -1,5 +1,5 @@
 import express from 'express'
-import {getadminDashboardStats,pendingApprovals,updateVendorStatus,getAllCustomers,getAllVendors,blockUser} from "../controllers/adminController.js"
+import {getadminDashboardStats,pendingApprovals,updateVendorStatus,getAllCustomers,getAllVendors,blockUser,getvendorslist} from "../controllers/adminController.js"
 import { setGlobalCommission,vendorCommisson,getcommisssion ,vendorCommissionReport} from '../controllers/globalCommissionController.js'
 const router = express.Router();
 router.get("/dashboard-stats",getadminDashboardStats );
@@ -8,6 +8,7 @@ router.patch('/updatestatus/:id',updateVendorStatus);
 router.get('/allcustomers',getAllCustomers);
 router.get('/allvendors',getAllVendors);
 router.patch('/blockuser/:id',blockUser);
+router.get('/vendorslist',getvendorslist);
 ////commission
 router.post('/global-commision',setGlobalCommission);
 router.put('/vendorwise-commision/:vendorId',vendorCommisson);

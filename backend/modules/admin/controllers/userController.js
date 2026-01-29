@@ -118,7 +118,7 @@ export const registerVendor = async (req, res) => {
       address,
     });
 
-    res.status(201).json({ message: "Vendor registered", user: newUser, vendor });
+    res.status(201).json({ message: "Vendor registered.", user: newUser, vendor });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -156,12 +156,12 @@ export const registerAdmin = async (req, res) => {
 /////login
 export const loginUser =async(req,res)=>{
 try{
-        const {username,email,password} =req.body;
-        if(!username || !email || !password ){
+        const {email,password} =req.body;
+        if( !email || !password ){
            return res.status(400).json({message:"All fields are required"});          
         }
         //FIND USER
-        const user = await User.findOne({$or:[{username},{email}],}).select("+password");
+        const user = await User.findOne({email}).select("+password");
         if(!user){
             return res.status(400).json({message:"Invalid Username/email"});
         }
@@ -174,9 +174,14 @@ if (!user.isActive) {
     const matchedPassword= await bcrypt.compare(password,user.password);
     
      if(!matchedPassword){
-        res.status(400).json({message:"invalid password"});    
+       return res.status(400).json({message:"invalid password"});    
      }
-
+if(user.role ==="vendor"){
+    const vendor = await Vendor.findOne({ user_id: user._id });
+    if (vendor.status !== "approved") {
+    return res.status(403).json({ message: "Waiting for admin approval" });
+  }
+  }
      //update lastloginAt in Admin
     user.lastLoginAt = new Date();
     await user.save();
@@ -194,14 +199,16 @@ await Vendor.findOneAndUpdate(
 );
 
      ///create jwt token
-     const token = jwt.sign({id:user._id,username,role:user.role},process.env.SECRET,{expiresIn: process.env.EXPIRES_IN});
+     const token = jwt.sign({id:user._id,username:user.username,role:user.role},process.env.SECRET,{expiresIn: process.env.EXPIRES_IN});
       //set token  in cookie
       res.cookie("token",token,{
      httpOnly: true,
-     secure: true,        // REQUIRED for production
-     sameSite: "none",    // REQUIRED for cross-site cookies  
+     //secure: false,
+     //sameSite: "lax",
+     secure: true,        //// REQUIRED for production,
+     sameSite: "none",     ////REQUIRED for cross-site cookies  
       }); 
-     res.status(201).json({message:"login successful",token:token,user:{id:user._id,username:user.username,role:user.role,lastLoginAt: user.lastLoginAt}});
+     res.status(200).json({message:"login successful",token:token,user:{id:user._id,username:user.username,role:user.role,lastLoginAt: user.lastLoginAt}});
 }
   catch(err){
         res.status(500).json({message:err.message});

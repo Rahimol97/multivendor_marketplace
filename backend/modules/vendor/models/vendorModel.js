@@ -15,7 +15,6 @@ const vendorSchema =new mongoose.Schema(
         status:{type:String,enum:["pending", "approved", "rejected"],  default: "pending"},
         isActive:{type:Boolean,default:false,index:true},
         lastLoginAt: {type: Date},
-        commissionPercentage:{type:Number,default:10}
     },
     {timestamps:true}
 );

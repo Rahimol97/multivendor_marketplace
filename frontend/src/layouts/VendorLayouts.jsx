@@ -1,8 +1,9 @@
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
-import AdminSidebar from "../components/admin/AdminSidebar";
+import VendorSidebar from "../components/vendor/VendorSidebar";
 import Rolenasednavbar from "../components/common/Rolenasednavbar";
-function AdminLayouts() {
+
+function VendorLayouts() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -10,7 +11,7 @@ function AdminLayouts() {
     <div className="flex w-full min-h-screen bg-(--primary) text-(--text) overflow-hidden">
       
       {/* Sidebar */}
-      <AdminSidebar
+      <VendorSidebar
         collapsed={collapsed}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
@@ -32,4 +33,4 @@ function AdminLayouts() {
   );
 }
 
-export default AdminLayouts;
+export default VendorLayouts;
