@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 app.use(cookieParser());
 app.use(cors({
-  origin:"https://multivendor-marketplace-rouge.vercel.app",
+  origin:"https://multivendor-marketplace-flax.vercel.app",
   credentials: true
 })); 
 
