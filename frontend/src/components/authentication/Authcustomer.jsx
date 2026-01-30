@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import api from '../../api'
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { useNavigate  } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 function Authcustomer() {
   const navigate = useNavigate();
@@ -267,6 +267,11 @@ finally {
               >
                 {signup ? "Login" : "Signup"}
               </button>
+            </div>
+            <div className="grid grid-cols-1 justify-items-center gap-2 mt-4">
+            <Link to ="vendor/authvendor"><button className="text-sm text-emerald-700 cursor-pointer">Want to sell products? Become a Vendor </button></Link>
+            <Link to ="admin/authadmin"><button className="text-sm text-emerald-400 cursor-pointer">platform staff</button></Link>
+
             </div>
 
           </div>

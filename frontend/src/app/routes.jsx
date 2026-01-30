@@ -20,16 +20,22 @@ import Authadmin from '../components/authentication/AuthadminPage'
 import Authvendor from "../components/authentication/Authvendor";
 import Authcustomer from "../components/authentication/Authcustomer";
 export const router = createBrowserRouter([
+/////authentication session 
+
 {
-path :"/admin/authadmin",
-element:<AuthLayout/>,
-children:[
-    {index:true,element:<Authadmin/>}
-],
+path: "/",
+ element: <AuthLayout />,
+ children:[
+    {index:true,element:<Authcustomer/>},
+    {path:"admin/authadmin",element:<Authadmin/>},
+    {path:"vendor/authvendor",element:<Authvendor/>},
+    
+ ]
 },
 
-/////////
-{
+
+    {
+
     path:"/admin",
     element:<AdminLayouts/>,
     children:[
@@ -44,22 +50,7 @@ children:[
 
     ],
 },
-///authentication routes
 
-{
-path :"/vendor/authvendor",
-element:<AuthLayout/>,
-children:[
-    {index:true,element:<Authvendor/>}
-],
-},
-{
-path :"/customer/authcustomer",
-element:<AuthLayout/>,
-children:[
-    {index:true,element:<Authcustomer/>}
-],
-},
 //vendor routes can be added here
 {
   path :"/vendor",

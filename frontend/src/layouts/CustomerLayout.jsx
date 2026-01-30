@@ -1,9 +1,23 @@
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Rolenasednavbar from "../components/common/Rolenasednavbar";
+import { useNavigate } from "react-router-dom";
 
 function CustomerLayout() {
+   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+useEffect(() => {
+  const handler = (e) => {
+    // Ctrl + A opens Admin Login
+    if (e.ctrlKey && e.key.toLowerCase() === "a") {
+      e.preventDefault(); // prevents browser "select all"
+      navigate("/admin/authadmin");
+    }
+  };
+
+  window.addEventListener("keydown", handler);
+  return () => window.removeEventListener("keydown", handler);
+}, [navigate]);
 
   return (
     <div className="flex w-full min-h-screen bg-(--primary) text-(--text) overflow-hidden">
