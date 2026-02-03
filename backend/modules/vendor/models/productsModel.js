@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
     {
+    user_id:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true
+   },
+    
    vendor_id:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"Vendor",
@@ -59,7 +65,10 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-
+minStock: {         
+  type: Number,
+  default: 0,
+},
     sku: {
       type: String,
       unique: true,

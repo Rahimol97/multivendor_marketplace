@@ -1,12 +1,13 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import { NavLink } from "react-router-dom";
+import api from '../../api'
 import {
-  HomeIcon,
-  CheckCircleIcon,
-XMarkIcon ,ShoppingBagIcon 
+  HomeIcon,CheckCircleIcon,XMarkIcon ,ShoppingBagIcon,
+  ClipboardDocumentListIcon,NoSymbolIcon,ExclamationTriangleIcon  
 } from "@heroicons/react/24/outline";
 
 function VendorSidebar({ collapsed, mobileOpen, setMobileOpen }) {
+  const [lowStockcount, setLowStockcount] = useState(0);
   const menuItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg text-base font-medium transition
      ${
@@ -14,6 +15,18 @@ function VendorSidebar({ collapsed, mobileOpen, setMobileOpen }) {
          ? "bg-(--accent) text-(--primary)"
          : "text-(--text) hover:bg-(--secondary) hover:text-(--accent)"
      }`;
+     /////get low stock count 
+     useEffect(() => {
+  const fetchLowStockcount = async () => {
+    const res = await api.get("/vendor/lowstock");
+    setLowStockcount(res.data.lowStockcount);
+  };
+
+  fetchLowStockcount();
+  const interval = setInterval(fetchLowStockcount, 30000); // refresh
+
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <>
@@ -68,7 +81,36 @@ function VendorSidebar({ collapsed, mobileOpen, setMobileOpen }) {
             <ShoppingBagIcon className="w-6 h-6" />
             {!collapsed && "Add Product"}
           </NavLink>
-       
+        <NavLink to="/vendor/productlist" end className={menuItemClass} onClick={() => setMobileOpen(false)}>
+            <ClipboardDocumentListIcon className="w-6 h-6" />
+            {!collapsed && "MY Product List"}
+          </NavLink>
+           <NavLink to="/vendor/blockedlist" end className={menuItemClass} onClick={() => setMobileOpen(false)}>
+            <NoSymbolIcon  className="w-6 h-6" />
+            {!collapsed && "Blocked Products"}
+          </NavLink>
+           <NavLink to="/vendor/lowstock" end className={menuItemClass} onClick={() => setMobileOpen(false)}>
+            <ExclamationTriangleIcon   className={`w-6 h-6 ${
+      lowStockcount > 0 ? "text-red-400 animate-pulse" : ""
+    }`} />
+            {!collapsed && (
+    <span
+      className={`${
+        lowStockcount > 0 ? "text-red-400 font-semibold animate-pulse" : ""
+      }`}
+    >
+      Low Stock Alerts
+    </span>
+  )}
+           {!collapsed && lowStockcount > 0 && (
+    <span className="ml-auto relative flex h-5 w-5 items-center justify-center">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+      <span className="relative inline-flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-white text-xs font-semibold">
+        {lowStockcount}
+      </span>
+    </span>
+  )}
+          </NavLink>
         </nav>
       </aside>
     </>

@@ -23,7 +23,7 @@ if (loading) return null;
    
     await api.post("/users/logout");
     setUser(null);
-    //navigate("/admin/authadmin");
+    navigate("/vendor/authvendor");
   }
 
   return (

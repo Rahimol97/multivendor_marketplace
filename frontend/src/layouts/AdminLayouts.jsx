@@ -24,7 +24,7 @@ function AdminLayouts() {
           setMobileOpen={setMobileOpen}
         />
 
-        <main className="p-6 flex-1 min-w-0 overflow-hidden">
+        <main className="p-4 flex-1 min-w-0 overflow-hidden">
           <Outlet />
         </main>
       </div>

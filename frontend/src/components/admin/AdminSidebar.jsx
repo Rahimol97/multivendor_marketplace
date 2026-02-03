@@ -7,7 +7,7 @@ import {
   UsersIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
-  XMarkIcon,
+  XMarkIcon,CubeIcon 
 } from "@heroicons/react/24/outline";
 
 function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
@@ -83,6 +83,11 @@ function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
           <NavLink to="/admin/accounts" className={menuItemClass} onClick={() => setMobileOpen(false)}>
             <UsersIcon className="w-6 h-6" />
             {!collapsed && "User / Vendor Management"}
+          </NavLink> 
+          
+           <NavLink to="/admin/category" className={menuItemClass} onClick={() => setMobileOpen(false)}>
+            <CubeIcon  className="w-6 h-6" />
+            {!collapsed && "Category"}
           </NavLink>
 
         {/* orders */}

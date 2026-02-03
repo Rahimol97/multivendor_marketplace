@@ -21,10 +21,10 @@ router.get("/checkUser",authMiddleware ,(req,res)=>{
 router.post("/logout",authMiddleware,(req,res)=>{
     res.clearCookie("token", {
     httpOnly: true,
-     //secure: false,   // 
-    //sameSite: "lax",
-    secure: true,        // REQUIRED in production,
-    sameSite: "none"     // REQUIRED for cross-site  
+     secure: false,   // 
+    sameSite: "lax",
+    // secure: true,        // REQUIRED in production,
+    // sameSite: "none"     // REQUIRED for cross-site  
       });
     res.json({message:"logged out successfully"});
 });

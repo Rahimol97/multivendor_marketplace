@@ -4,6 +4,9 @@ import User from "../models/adminModel.js"
 import OrderItem from "../../vendor/models/orderItem.js"
 import Commission from "../models/commissionModel.js"
 import VendorCommission from "../models/vendorwiseCommissionModel.js"
+import Category from "../models/categoryModel.js"
+
+
 export const getadminDashboardStats =async(req,res)=>{
     try{
        const customerCount  = await Customer.countDocuments({ isActive: true })
@@ -258,3 +261,55 @@ export const getvendorslist = async(req,res)=>{
 }
 
 
+
+//////////category section 
+export const addcategory = async(req,res)=>{
+  try {
+    const { name } = req.body;
+
+    const category = await Category.create({
+      name,
+      imageUrl: req.file.path, // Cloudinary URL
+    });
+
+    res.status(201).json(category);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+/////get all categories
+export const getcategories =async (req, res) => {
+  const categories = await Category.find().sort({ createdAt: -1 });
+  res.status(200).json(categories);
+};
+/////get active categories
+export const getactivecategories =async (req, res) => {
+  const categories = await Category.find({isBlocked:false}).sort({ createdAt: -1 });
+  res.status(200).json(categories);
+};
+///////edit categories
+export const updatecategory = async (req, res) => {
+  try {
+    const {id} =req.params;
+    const { name } = req.body;
+    let updateData = { name };
+  
+if (req.file) {
+  updateData.imageUrl = req.file.path;
+}
+ const category = await Category.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
+   res.status(201).json(category);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+export const blockunblockcat = async (req, res) => {
+  const category = await Category.findById(req.params.id);
+  category.isBlocked = !category.isBlocked;
+  await category.save();
+  res.json(category);
+};

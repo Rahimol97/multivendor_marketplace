@@ -9,11 +9,17 @@
   --accent: #00ADB5;
   --text: #222831;
 
+   --dark-teal: rgb(0, 84, 97);
+  --mid-teal: rgb(1, 135, 144);
+  --bright-teal: rgb(0, 183, 181);
+  --light-bg: rgb(244, 244, 244);
+
 }
 
 body {
   font-family:  sans-serif !important;
   overflow-x:hidden;
+
 }
 
 /*  Dark Mode */
@@ -22,4 +28,33 @@ body {
   --secondary: #393E46;
   --accent: #00ADB5;
   --text: #fcfcfc;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease forwards;
+}
+.animate-fadeInUp.delay-150 {
+  animation-delay: 0.15s;
+}
+.animate-fadeInUp.delay-300 {
+  animation-delay: 0.3s;
+}
+/* Hide scrollbar but allow scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
 }

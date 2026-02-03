@@ -13,8 +13,15 @@ import Orders from "../features/admin/pages/Orders";
 import Reports from "../features/admin/pages/Reports";
 import Venderorders from "../features/admin/pages/Vendororders";
 import Ordertrack from "../features/admin/pages/Ordertrack";
+import Category from "../features/admin/pages/Category";
 /////vendor pages
 import Addproduct from "../features/vendor/pages/Addproduct";
+import ProductList from "../features/vendor/pages/ProductList";
+import BlockedList from "../features/vendor/pages/BlockedList"
+import Lowstock from "../features/vendor/pages/Lowstock";
+
+///////////customer pages
+import Home from "../features/customer/pages/Home"
 ////authentication pages
 import Authadmin from '../components/authentication/AuthadminPage'
 import Authvendor from "../components/authentication/Authvendor";
@@ -47,6 +54,7 @@ path: "/",
         {path:"/admin/vendororders",element:<Venderorders />},
         {path:"/admin/ordertrack",element:<Ordertrack />},
         {path:"/admin/reports",element:<Reports />},
+        {path:"/admin/category",element:<Category />}
 
     ],
 },
@@ -58,8 +66,12 @@ path: "/",
   children:[
       //vendor protected routes go here
  {path:"/vendor/addproduct",element:<Addproduct/>},
- 
-  ],
+ {path:"/vendor/editproduct/:id",element:<Addproduct/>},
+ {path:"/vendor/productlist",element:<ProductList />},
+ {path:"/vendor/blockedlist",element:<BlockedList />},
+ {path:"/vendor/lowstock",element:<Lowstock />}
+
+],
   
 },
 ///////customer layouts
@@ -67,7 +79,8 @@ path: "/",
   path :"/customer",
   element:<CustomerLayout/>,
   children:[
-      //vendor protected routes go here
+  {index:true,element:<Home/>},
+   
   ],
   
 }

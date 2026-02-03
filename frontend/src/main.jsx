@@ -4,14 +4,18 @@ import App from "./app/App";
 import "./index.css";
 import AuthProvider from "./components/context/AuthContext";
 import axios from "axios";
+import {store} from './redux/store'
+import { Provider } from "react-redux";
 
 axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
   <AuthProvider>
-          <App />
-        </AuthProvider>
+  <Provider store={store}>
+  <App />
+</Provider>
+  </AuthProvider>
   </React.StrictMode>
 );
 

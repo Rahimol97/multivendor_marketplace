@@ -6,7 +6,6 @@ import OrderItem from '../models/orderItem.js'
 export const addProduct =async(req,res)=>{
     try{
      const {
-    vendor_id,
       name,
       description,
       category,
@@ -14,12 +13,18 @@ export const addProduct =async(req,res)=>{
       price,
       discountPercent,
       stock,
+      minStock,
       sku,
       isActive,
     } = req.body;
-
+   const  userid = req.loggedUser._id;
+const vendor = await Vendor.findOne({user_id: userid})
+if (!vendor) {
+  return res.status(404).json({ message: "Vendor profile not found" });
+}
+const vendor_id = vendor._id;
     //validation
-  if (!vendor_id || !name || !description || !category || !price || !stock || !sku) {
+  if (!name || !description || !category || !price || !stock || !sku || !minStock) {
       return res.status(400).json({
         success: false,
         message: "Please fill all required fields",
@@ -37,6 +42,7 @@ export const addProduct =async(req,res)=>{
    const parsedprice = Number(price);
    const parseddiscount =  Number(discountPercent) ||0;
    const parsedstock = Number(stock);
+   const parsedMinStock = Number(minStock) || 0;
    //calculate discounted price
  
    const discountedPrice = parsedprice - (parsedprice * parseddiscount) / 100;
@@ -46,9 +52,11 @@ export const addProduct =async(req,res)=>{
       public_id: file.filename,
     })) || [];
 
+
 //add product table
 const product = await Product.create({
-    vendor_id,
+    user_id:userid,
+  vendor_id,
       name,
       description,
       category,
@@ -58,6 +66,7 @@ const product = await Product.create({
       discountPercent: parseddiscount,
       discountedPrice,
       stock:parsedstock,
+      minStock: parsedMinStock,
       sku,
       isActive: isActive ?? true, 
 });
@@ -69,20 +78,11 @@ const product = await Product.create({
 }
  
     catch(error){
+      console.error("ADD PRODUCT ERROR:", error);
         res.status(500).json({message:"server error",error:error.message})
     }
 };
-//get all products
-export const getAllproducts = async(req,res)=>{
-    try{
-   const products = await Product.find().populate("vendor_id","shopName email mobile").sort({ createdAt: -1});
-   res.status(200).json({success:true,count:products.length,products})
-    }
-        catch(error){
-        res.status(500).json({success:false,message:"server error",error:error.message})
-    }
 
-};
 //get product by id
 export const  getproductById = async(req,res)=>{
     try{
@@ -103,10 +103,10 @@ res.status(200).json({success:true,products})
 
 ///delete product
 
-export const deleteProduct = async(req,res)=>{
+export const blockProduct = async(req,res)=>{
     try{
   const {id} = req.params;
-  const product = await Product.findByIdAndDelete(id);
+  const product = await Product.findByIdAndUpdate(id,{isActive:false},{ new: true });
   if (!product) {
       return res.status(404).json({
         success: false,
@@ -115,7 +115,31 @@ export const deleteProduct = async(req,res)=>{
     }
   res.status(200).json({
     success: true,
-      message: "Product deleted successfully",
+      message: "Product blocked successfully",
+  })
+}
+    catch(error){
+        res.status(500).json({
+            success:false,
+            message:"sever error",
+            error:error.message
+        })
+    }
+};
+/////unblock product
+export const unblockProduct = async(req,res)=>{
+    try{
+  const {id} = req.params;
+  const product = await Product.findByIdAndUpdate(id,{isActive:true},{ new: true });
+  if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+  res.status(200).json({
+    success: true,
+      message: "Product unblocked successfully",
   })
 }
     catch(error){
@@ -128,13 +152,41 @@ export const deleteProduct = async(req,res)=>{
 };
 /////get products vendorwise
 export const getvendorwiseProduct = async(req,res)=>{
-    try{
-     const {vendorId} =req.params;
-     const products = await Product.find({vendor_id:vendorId}).sort({createdAt: -1,});
-res.status(200).json({
+   
+try{
+
+   //getting vendor id by using userid   
+      const  userid = req.loggedUser._id;
+const vendor = await Vendor.findOne({user_id: userid})
+if (!vendor) {
+  return res.status(404).json({ message: "Vendor profile not found" });
+}
+const {category,search, page ,limit } =req.query;
+const query = {vendor_id:vendor._id};
+      query.isActive =true;
+      if(category && category !=="All"){
+        query.category=category;
+      }
+      if(search)
+      {
+        query.$or=[
+          {name: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { sku: { $regex: search, $options: "i" } },
+        ];
+      }
+      const skip = (page -1) * limit;
+
+     const products = await Product.find(query).sort({createdAt: -1,}).skip(skip).limit(limit);
+    const totalproducts = await Product.countDocuments(query);
+     res.status(200).json({
       success: true,
-      count: products.length,
-      products,
+        products,
+      pagination:{
+      totalproducts,
+    totalpages:Math.ceil(totalproducts/limit),
+  },
+    
     });
     }
         catch(error){
@@ -146,7 +198,52 @@ res.status(200).json({
     }
 
 };
+/////////getvendorwiseblockedproducts
+export const getvendorwiseProductblocked = async(req,res)=>{
+   
+try{
 
+   //getting vendor id by using userid   
+      const  userid = req.loggedUser._id;
+const vendor = await Vendor.findOne({user_id: userid})
+if (!vendor) {
+  return res.status(404).json({ message: "Vendor profile not found" });
+}
+const {search, page ,limit } =req.query;
+const query = {vendor_id:vendor._id};
+      query.isActive =false;
+    
+      if(search)
+      {
+        query.$or=[
+          {name: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { sku: { $regex: search, $options: "i" } },
+        ];
+      }
+      const skip = (page -1) * limit;
+
+     const products = await Product.find(query).sort({createdAt: -1,}).skip(skip).limit(limit);
+    const totalproducts = await Product.countDocuments(query);
+     res.status(200).json({
+      success: true,
+        products,
+      pagination:{
+      totalproducts,
+    totalpages:Math.ceil(totalproducts/limit),
+  },
+    
+    });
+    }
+        catch(error){
+        res.status(500).json({
+            success:false,
+            message:"sever error",
+            error:error.message
+        })
+    }
+
+};
 //////update product
 
 export const updateProduct = async(req,res)=>{
@@ -157,18 +254,26 @@ export const updateProduct = async(req,res)=>{
         res.status(404).json({success:false,message:"product not found"});
       }
           // Update fields
-    product.vendor_id = req.body.vendor_id || product.vendor_id;
+    product.vendor_id = product.vendor_id;
     product.name = req.body.name || product.name;
     product.description = req.body.description || product.description;
     product.category = req.body.category || product.category;
     product.brand = req.body.brand || product.brand;
-    product.images = req.body.images || product.images;
     product.price = req.body.price ?? product.price;
     product.discountPercent = req.body.discountPercent ?? product.discountPercent;
     product.stock = req.body.stock ?? product.stock;
+    product.minStock = req.body.minStock ?? product.minStock;
     product.sku = req.body.sku || product.sku;
     product.isActive = req.body.isActive ?? product.isActive;
-    
+      //  If NEW images uploaded → replace old images
+    if (req.files && req.files.length > 0) {
+      const images = req.files.map(file => ({
+        url: file.path,       // Cloudinary URL
+        public_id: file.filename,
+      }));
+
+      product.images = images;
+    }
 /////calculate discounted price
     let discountedPrice = product.price;
     if (product.discountPercent > 0) {
@@ -195,6 +300,32 @@ export const updateProduct = async(req,res)=>{
     }
 
 };
+//////////min-stock alert
+export const lowstockproducts = async(req,res)=>{
+  try{
+     const  userid = req.loggedUser._id;
+const vendor = await Vendor.findOne({user_id: userid})
+if (!vendor) {
+  return res.status(404).json({ message: "Vendor profile not found" });
+}
+   const vendorid = vendor._id;
+   const products = await Product.find({
+    vendor_id:vendorid,
+    $expr:{$lte:["$stock","$minStock"]}
+   }).select("name stock minStock");
+res.status(200).json({
+      lowStockcount: products.length,
+      products
+    });
+  }
+  catch(err){
+    res.status(500).json({
+       success:false,
+            message:"sever error",
+            error:err.message
+    })
+  }
+}
 
 /////update vendor profile
 export const updateVendorprofile = async(req,res)=>{

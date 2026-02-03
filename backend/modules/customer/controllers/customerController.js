@@ -399,3 +399,26 @@ return res.status(200).json({
 }
 
 };
+//////getallproducts
+
+export const getallproducts = async(req,res)=>{
+  try{
+  const {search,category} = req.query;
+  let filter={isActive: true};
+   if (category){
+    filter.category = category;
+   }
+   if (search) {
+    filter.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { brand: { $regex: search, $options: "i" } },
+    { category: { $regex: search, $options: "i" } },
+    ];
+  }
+   const products = await Product.find(filter);
+   res.status(200).json(products);
+  }
+   catch(error){
+         res.status(500).json({message:"Server error", error: error.message});   
+}
+} 
