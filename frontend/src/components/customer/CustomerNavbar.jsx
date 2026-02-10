@@ -10,12 +10,20 @@ import {
 } from "@heroicons/react/24/outline";
 import {useDispatch, useSelector} from "react-redux";
 import { setSearch, fetchProducts } from "../../redux/productSlice";
+import {useAuth} from '../context/AuthContext'
+import api from '../../api'
+import { Link ,useNavigate} from "react-router-dom";
 
 function CustomerNavbar() {
   const [showFooter, setShowFooter] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const dispatch = useDispatch();
+    const navigate = useNavigate();
+  
+    const { user,setUser, loading }= useAuth();
+  
   const search = useSelector((state) => state.products.search);
+ const cartCount = useSelector((state) => state.cart.count);
   useEffect(() => {
   let lastScrollY = window.scrollY;
 
@@ -34,8 +42,12 @@ function CustomerNavbar() {
   return () => window.removeEventListener("scroll", handleScroll);
 }, []);
 
-  
-  
+  const handlelogout =async()=>{
+   
+    await api.post("/users/logout");
+    setUser(null);
+  }
+  if (loading) return null; 
   return (
     <>
       {/* navbar */}
@@ -71,13 +83,13 @@ function CustomerNavbar() {
             <a href="/contact" className="hover:text-(--bright-teal)">Contact Us</a>
             <a href="/about" className="hover:text-(--bright-teal)">About Us</a>
 
-            <button className="relative hover:text-(--bright-teal)">
+           <Link to ="/customer/product/cart" ><button className="relative hover:text-(--bright-teal)">
               <ShoppingCartIcon className="w-7 h-7" />
               <span className="absolute -top-2 -right-2 bg-(--mid-teal) text-(--light-bg) text-xs px-1.5 py-0.5 rounded-full font-bold">
-                2
+                {cartCount}
               </span>
             </button>
-
+</Link>
             <button onClick={() => setProfileOpen(true)} className="hover:text-(--bright-teal)">
               <UserCircleIcon className="w-7 h-7" />
             </button>
@@ -111,10 +123,23 @@ function CustomerNavbar() {
           <span className="text-xs">Home</span>
         </a>
 
-        <a href="/cart" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
-          <ShoppingCartIcon className="w-6 h-6" />
-          <span className="text-xs">Cart</span>
-        </a>
+       <Link to
+  ="/customer/product/cart"
+  className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)"
+>
+  <div className="relative">
+    <ShoppingCartIcon className="w-6 h-6" />
+
+    {cartCount > 0 && (
+      <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] min-w-4.5 h-4.5 flex items-center justify-center rounded-full px-1">
+        {cartCount}
+      </span>
+    )}
+  </div>
+
+  <span className="text-xs">Cart</span>
+</Link>
+
 
         <a href="/orders" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
           <ClipboardDocumentListIcon className="w-6 h-6" />
@@ -141,10 +166,10 @@ function CustomerNavbar() {
             </div>
 
             <nav className="flex flex-col gap-4 text-(--mid-teal) font-medium">
-              <a href="/profile" className="hover:text-(--bright-teal)">Personal Info</a>
-              <a href="/orders" className="hover:text-(--bright-teal)">My Orders</a>
-              <a href="/wishlist" className="hover:text-(--bright-teal)">Wishlist</a>
-              <a href="/logout" className="text-red-500">Logout</a>
+              <Link to="/profile"  className="hover:text-(--bright-teal)">Personal Info</Link>
+              <Link to="/customer/product/orders" className="hover:text-(--bright-teal)">My Orders</Link>
+              <Link to="/customer/product/wishlist" className="hover:text-(--bright-teal)">Wishlist</Link>
+              <button onClick={handlelogout} className="text-red-500">Logout</button>
             </nav>
           </div>
         </>

@@ -35,7 +35,6 @@ const limitc =1;
   const getcustomers = async()=>{
     try{
      const response = await api.get(`/admin/allcustomers?search=${searchc}&page=${pagec}&limit=${limitc}`) 
-    console.log(response);
      setcustomers(response.data.customers);
     setPagnationcount(response.data.pagination);
     }
@@ -47,7 +46,6 @@ const limitc =1;
     const getvendors = async()=>{
     try{
      const response = await api.get(`/admin/allvendors?search=${searchv}&page=${pagev}&limit=${limitv}`) 
-    console.log(response);
      setvendors(response.data.vendors);
     setPagnationvendor(response.data.pagination);
     }

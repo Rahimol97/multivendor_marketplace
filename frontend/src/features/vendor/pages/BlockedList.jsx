@@ -26,7 +26,6 @@ const showToast = (message,type="success")=>{
   const getblockedproducts = async()=>{
       try{
 const response = await api.get(`/vendor/vendorwiseblocked?search=${search}&page=${page}&limit=${limit}`)
-   console.log(response.data.products) ;
     setProducts(response.data.products) ;
     setPaginationcount(response.data.pagination);
 }

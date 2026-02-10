@@ -87,7 +87,6 @@ function Commission() {
   const handleVendorUpdate = async (vendorId) => {
     try {
       const vendor = vendors.find((v) => v.vendorId === vendorId);
-console.log(vendor);
       if (vendor.commissionEditable === "" || vendor.commissionEditable === null) {
         setToastType("error");
         setToastmsg("Commission is required");

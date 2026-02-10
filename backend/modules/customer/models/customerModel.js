@@ -6,6 +6,7 @@ const customerSchema =new mongoose.Schema(
         customerName:{type:String},
         mobile:{type:String},
         address:[{
+             _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
             street:String,
             city:String,
             state:String,

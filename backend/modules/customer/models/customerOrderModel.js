@@ -23,7 +23,7 @@ const oderSchema = new mongoose.Schema(
 
    paymentMethod:{
     type:String,
-    enum:["cash", "card", "upi", "netbanking"],
+    enum:["COD", "Razorpay", "wallet"],
     required: true,
    },
   paymentStatus:{
@@ -31,6 +31,10 @@ const oderSchema = new mongoose.Schema(
     enum:["pending", "paid", "failed"],
     required:true
   },
+  razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
+    paidAt: { type: Date },
+    
    orderStatus:{
     type:String,
     enum:["placed", "partially_confirmed", "completed", "cancelled"],
@@ -41,6 +45,7 @@ const oderSchema = new mongoose.Schema(
       city: String,
       state: String,
       pincode: String,
+       mobile: String
     },
 },
   { timestamps: true }

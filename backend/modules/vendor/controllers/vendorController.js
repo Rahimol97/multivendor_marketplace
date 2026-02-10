@@ -2,6 +2,8 @@ import Product from '../models/productsModel.js'
 import Vendor from '../models/vendorModel.js'
 import VendorOrder from '../models/venderwiseOrder.js'
 import OrderItem from '../models/orderItem.js'
+import {getIO  } from "../../../socket.js"
+import mongoose from 'mongoose'
 
 export const addProduct =async(req,res)=>{
     try{
@@ -87,6 +89,10 @@ const product = await Product.create({
 export const  getproductById = async(req,res)=>{
     try{
 const {id} = req.params;
+console.log(id)
+ if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
 const products = await Product.findById(id).populate("vendor_id","shopName email mobile")
  if(!products){
   res.status(404).json({ success: false,message: "Product not found",})
@@ -100,7 +106,30 @@ res.status(200).json({success:true,products})
    
     }
 };
+/////get products by brand
+export const  getproductBybrand = async(req,res)=>{
+    try{
+const {brand} = req.query;
 
+    if (!brand) {
+      return res.status(400).json({
+        success: false,
+        message: "Brand  is required",
+      });
+    }
+const products = await Product.find({brand}).populate("vendor_id","shopName email mobile")
+ if(!products){
+  res.status(404).json({ success: false,message: "Product not found",})
+  
+ }
+
+res.status(200).json({success:true,products})
+}
+    catch(error){
+   res.status(500).json({success:false,message:"server error",error:error.message})
+   
+    }
+};
 ///delete product
 
 export const blockProduct = async(req,res)=>{
@@ -365,6 +394,33 @@ export const getVendorbyId =async(req,res)=>{
     catch(error){
          res.status(500).json({message:"Server error", error: error.message});   
 }
+};
+///////update vendor order status
+export const updateVendorOrderStatus = async (req, res) => {
+  try {
+    const { vendorOrderId } = req.params;
+    const { status } = req.body;
+
+    const vendorOrder = await VendorOrder.findById(vendorOrderId).populate("customer_id");;
+    if (!vendorOrder) return res.status(404).json({ message: "Vendor order not found" });
+
+    vendorOrder.orderStatus = status;
+    vendorOrder.statusHistory.push({ status });
+
+    await vendorOrder.save();
+//////Emit real-time update to that specific customer
+        const io = getIO();
+        const customerRoom = vendorOrder.customer_id._id.toString();
+console.log("Emitting to room:", customerRoom);
+
+io.to(customerRoom).emit("orderStatusUpdated", {
+  vendorOrderId,
+  status,
+});
+res.json({ success: true, vendorOrder });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Status update failed" });
+  }
 };
 
 ////////////////SALES REPORT 

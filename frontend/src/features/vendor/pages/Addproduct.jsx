@@ -93,7 +93,6 @@ setForm({
 };
 const fetchcategories =async()=>{
  const response = await api.get("/admin/getactivecategories")
-console.log(response.data);
 setCategory(response.data)
 }
 /////////fetch data when editing
@@ -102,7 +101,7 @@ useEffect(()=>{
    if (!isEditMode) return;
     const fetchProduct = async () => {
     try {
-      const res = await api.get(`/vendor/${id}`); // your get by id route
+      const res = await api.get(`/vendor/product/id/${id}`); // your get by id route
       const p = res.data.products;
 
       setForm({

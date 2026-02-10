@@ -22,7 +22,7 @@ router.post("/logout",authMiddleware,(req,res)=>{
     res.clearCookie("token", {
     httpOnly: true,
     //secure: false,   
-    //sameSite: "lax",
+    ///sameSite: "lax",
     secure: true,        // REQUIRED in production,
     sameSite: "none"     // REQUIRED for cross-site  
       });

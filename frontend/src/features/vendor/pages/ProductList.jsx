@@ -28,7 +28,6 @@ useEffect(()=>{
 /////get category
 const fetchcategories =async()=>{
  const response = await api.get("/admin/getcategories")
-console.log(response.data);
 setpCategory(response.data)
 }
 const showToast = (message,type="success")=>{
@@ -39,7 +38,6 @@ const showToast = (message,type="success")=>{
      const getproducts = async()=>{
       try{
 const response = await api.get(`/vendor/vendorwise?category=${category}&search=${search}&page=${page}&limit=${limit}`)
-   console.log(response.data.products) ;
     setProducts(response.data.products) ;
     setPaginationcount(response.data.pagination);
 }

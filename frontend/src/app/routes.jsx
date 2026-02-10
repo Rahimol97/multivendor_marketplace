@@ -19,11 +19,21 @@ import Addproduct from "../features/vendor/pages/Addproduct";
 import ProductList from "../features/vendor/pages/ProductList";
 import BlockedList from "../features/vendor/pages/BlockedList"
 import Lowstock from "../features/vendor/pages/Lowstock";
+import VendorOrders from "../features/vendor/pages/VendorOrders";
 
 ///////////customer pages
 import Home from "../features/customer/pages/Home"
+import ProductDetails from "../features/customer/ProductDetails";
+import CartPage from "../features/customer/pages/CartPage";
+import ReviewPage from "../features/customer/pages/ReviewPage";
+import AddressForm from "../features/customer/pages/AddressForm";
+import CartReviewPage from "../features/customer/pages/CartReviewPage";
+import PaymentPage from "../features/customer/pages/PaymentPage";
+import OrdersPage from "../features/customer/pages/OrdersPage";
+import OrderdetailsPage from "../features/customer/pages/OrderdetailsPage";
+import WishlistPage from "../features/customer/pages/WishlistPage";
 ////authentication pages
-import Authadmin from '../components/authentication/AuthadminPage'
+import Authadmin from '../components/authentication/AuthadminPage';
 import Authvendor from "../components/authentication/Authvendor";
 import Authcustomer from "../components/authentication/Authcustomer";
 export const router = createBrowserRouter([
@@ -69,19 +79,34 @@ path: "/",
  {path:"/vendor/editproduct/:id",element:<Addproduct/>},
  {path:"/vendor/productlist",element:<ProductList />},
  {path:"/vendor/blockedlist",element:<BlockedList />},
- {path:"/vendor/lowstock",element:<Lowstock />}
-
+ {path:"/vendor/lowstock",element:<Lowstock />},
+ {path:"/vendor/vendororder",element:<VendorOrders/>}
 ],
   
 },
 ///////customer layouts
 {
-  path :"/customer",
+   path :"/customer",
   element:<CustomerLayout/>,
   children:[
   {index:true,element:<Home/>},
-   
+        {path:"/customer/product/address",element:<AddressForm />},
+      {path:"/customer/product/address/:addressId",element:<AddressForm />},
+     {path:"/customer/product/orderdetails/:orderId",element:<OrderdetailsPage />},
+    {path:"/customer/product/review/:productId",element:<ReviewPage />},
+    {path:"/customer/product/reviewcart",element:<CartReviewPage />},
+    {path:"/customer/product/payment",element:<PaymentPage />},
+    {path:"/customer/product/orders",element:<OrdersPage />},
+    {path:"/customer/product/wishlist",element:<WishlistPage />},
+
+    {path:"/customer/product/cart",element:<CartPage />},
+    {path:"/customer/product/:id",element:<ProductDetails />}
+
   ],
-  
 }
+
 ]);
+
+
+
+

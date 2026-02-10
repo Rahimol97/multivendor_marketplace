@@ -31,7 +31,6 @@ function Vendororders() {
    const shopnames = async ()=>{
     try{
       const response = await api.get("/admin/vendorslist")
-      console.log(response.data.vendors);
       setShopname(response.data.vendors)
     }
     catch (error) {
@@ -42,7 +41,6 @@ function Vendororders() {
    const getvendororders = async()=>{
     try{
   const response = await api.get(`/customer/vendorwiseorders?fdate=${datef}&tdate=${datet}&vendorid=${vendorid}&page=${pagec}&limit=${limit}`);
-   console.log(response.data.orders);
    setOrders(response.data.orders);
    setPaginationcount(response.data.pagination);
 }

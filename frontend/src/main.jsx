@@ -11,11 +11,11 @@ axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+     <Provider store={store}>
   <AuthProvider>
-  <Provider store={store}>
   <App />
-</Provider>
   </AuthProvider>
+</Provider>
   </React.StrictMode>
 );
 

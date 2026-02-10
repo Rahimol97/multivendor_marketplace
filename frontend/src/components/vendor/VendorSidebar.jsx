@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import api from '../../api'
 import {
   HomeIcon,CheckCircleIcon,XMarkIcon ,ShoppingBagIcon,
-  ClipboardDocumentListIcon,NoSymbolIcon,ExclamationTriangleIcon  
+  ClipboardDocumentListIcon,NoSymbolIcon,ExclamationTriangleIcon,ClipboardDocumentCheckIcon 
 } from "@heroicons/react/24/outline";
 
 function VendorSidebar({ collapsed, mobileOpen, setMobileOpen }) {
@@ -110,6 +110,10 @@ function VendorSidebar({ collapsed, mobileOpen, setMobileOpen }) {
       </span>
     </span>
   )}
+          </NavLink>
+              <NavLink to="/vendor/vendororder" end className={menuItemClass} onClick={() => setMobileOpen(false)}>
+            <ClipboardDocumentCheckIcon className="w-6 h-6" />
+            {!collapsed && "Update OrderStatus"}
           </NavLink>
         </nav>
       </aside>

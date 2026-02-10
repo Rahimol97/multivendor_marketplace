@@ -31,9 +31,12 @@ const cartSchema = new mongoose.Schema(
         quantity: { type: Number, required: true, min: 1 },
 
         price: { type: Number, required: true }, 
+        discountedPrice: { type: Number, required: true },   // final price after discount
+    discountPercent: { type: Number, required: true },
 
-        total: { type: Number, required: true }, // quantity * price
-    },
+ itemSubTotal: { type: Number, required: true },  // price * qty
+    itemDiscount: { type: Number, required: true },  // discount amount * qty
+    itemTotal: { type: Number, required: true },      },
    ],
   subTotal :{type:Number,default:0},
   tax:{type:Number,default:0},

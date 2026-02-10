@@ -6,22 +6,210 @@ import OrderItem from '../../vendor/models/orderItem.js'
 import mongoose from 'mongoose'
 import orderItem from '../../vendor/models/orderItem.js'
 
+// export const createOrder = async (req, res) => {
+//   const session = await mongoose.startSession();
+
+//   try {
+
+//     session.startTransaction();
+//     const user_id = req.loggedUser._id; // auth middleware
+
+//     const {
+//       customer_id,
+//       items, // [{ product_id, quantity }]
+//       paymentMethod,
+//       paymentStatus,
+//       deliveryAddress,
+//       tax = 0,
+//       discount = 0,
+//     } = req.body;
+
+//     if (!customer_id || !items?.length) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "customer_id and items required",
+//       });
+//     }
+
+//     // ✅ get product details
+//     const productIDs = items.map((i) => i.product_id);
+
+//     const products = await Product.find({ _id: { $in: productIDs } }).session(
+//       session
+//     );
+
+//     if (products.length !== items.length) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Some products not found",
+//       });
+//     }
+//   console.error("ORDER CREATION8 :");
+//     // ✅ Create allItems with price + vendor_id
+//     const allItems = items.map((i) => {
+//       const product = products.find(
+//         (p) => p._id.toString() === i.product_id.toString()
+//       );
+
+//       const price =
+//         product.discountedPrice > 0 ? product.discountedPrice : product.price;
+
+//       return {
+//         product_id: product._id,
+//         vendor_id: product.vendor_id,
+//         quantity: i.quantity,
+//         price,
+//         total: price * i.quantity,
+
+//         productName: product.name,
+//         category: product.category,
+//         sku: product.sku,
+//       };
+//     });
+
+//     const subTotal = allItems.reduce((sum, i) => sum + i.total, 0);
+//     const grandTotal = subTotal + tax - discount;
+
+//     // ✅ Create main Order
+//     const order = await Order.create(
+//       [
+//         {
+//           orderNumber: "ORD-" + Date.now(),
+//           user_id,
+//           customer_id,
+//           totalItems: allItems.reduce((sum, i) => sum + i.quantity, 0),
+//           subTotal,
+//           tax,
+//           discount,
+//           grandTotal,
+//           paymentMethod,
+//           paymentStatus,
+//           orderStatus: "placed",
+//           deliveryAddress,
+//         },
+//       ],
+//       { session }
+//     );
+
+//     const createdOrder = order[0];
+
+//     // ✅ Split vendor wise
+//     const vendorWise = {};
+//     allItems.forEach((item) => {
+//       const vendorId = item.vendor_id.toString();
+//       if (!vendorWise[vendorId]) vendorWise[vendorId] = [];
+
+//       vendorWise[vendorId].push({
+//         product_id: item.product_id,
+//         quantity: item.quantity,
+//         price: item.price,
+//         total: item.total,
+//         productName: item.productName,
+//         category: item.category,
+//         sku: item.sku,
+//       });
+//     });
+
+//     // ✅ Create VendorOrders + OrderItems
+//     const vendorOrders = await Promise.all(
+//       Object.keys(vendorWise).map(async (vendorId) => {
+//         const vendorItems = vendorWise[vendorId];
+//         const vendorSubTotal = vendorItems.reduce((sum, i) => sum + i.total, 0);
+
+//         // ✅ VendorOrder
+//         const vendorOrder = await VendorOrder.create(
+//           [
+//             {
+//               order_id: createdOrder._id,
+//               vendor_id: vendorId,
+//               customer_id,
+//               items: vendorItems.map((i) => ({
+//                 product_id: i.product_id,
+//                 quantity: i.quantity,
+//                 price: i.price,
+//                 total: i.total,
+//               })),
+//               subTotal: vendorSubTotal,
+//               vendorEarning: vendorSubTotal * 0.9,
+//               platformCommisson: vendorSubTotal * 0.1,
+//               vendorPaymentStatus: "pending",
+//               orderStatus: "pending",
+//             },
+//           ],
+//           { session }
+//         );
+
+//         const createdVendorOrder = vendorOrder[0];
+
+//         // ✅ OrderItems
+//         const orderItemsDocs = vendorItems.map((i) => ({
+//           order_id: createdOrder._id,
+//           vendorOrder_id: createdVendorOrder._id,
+//           customer_id,
+//           vendor_id: vendorId,
+//           product_id: i.product_id,
+
+//           productName: i.productName,
+//           category: i.category,
+//           sku: i.sku,
+
+//           quantity: i.quantity,
+//           price: i.price,
+//           total: i.total,
+
+//           orderStatus: createdVendorOrder.orderStatus,
+//           orderedAt: createdOrder.createdAt,
+//         }));
+
+//         await OrderItem.insertMany(orderItemsDocs, { session });
+
+//         return createdVendorOrder;
+//       })
+//     );
+
+//     // ✅ Commit transaction
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Order created successfully",
+//       order: createdOrder,
+//       vendorOrders,
+//     });
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//   console.error("ORDER CREATION FAILED:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Server error",
+//       error: error.message,
+//     });
+//   }
+// };
+
+
+
+//fetch all main orders
+
 export const createOrder = async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
-
-    const user_id = req.loggedUser._id; // auth middleware
+    const user_id = req.loggedUser._id;
 
     const {
       customer_id,
-      items, // [{ product_id, quantity }]
+      items,
       paymentMethod,
       paymentStatus,
       deliveryAddress,
+      subTotal = 0,
       tax = 0,
       discount = 0,
+      grandTotal = 0,
     } = req.body;
 
     if (!customer_id || !items?.length) {
@@ -30,54 +218,27 @@ export const createOrder = async (req, res) => {
         message: "customer_id and items required",
       });
     }
+/////chek stock avaiabilty
+const productIds = items.map(i => i.product_id);
 
-    // ✅ get product details
-    const productIDs = items.map((i) => i.product_id);
+const products = await Product.find({ _id: { $in: productIds } }).session(session);
 
-    const products = await Product.find({ _id: { $in: productIDs } }).session(
-      session
-    );
+for (const cartItem of items) {
+  const product = products.find(p => p._id.toString() === cartItem.product_id.toString());
 
-    if (products.length !== items.length) {
-      return res.status(400).json({
-        success: false,
-        message: "Some products not found",
-      });
-    }
+  if (!product) throw new Error("Product not found");
 
-    // ✅ Create allItems with price + vendor_id
-    const allItems = items.map((i) => {
-      const product = products.find(
-        (p) => p._id.toString() === i.product_id.toString()
-      );
-
-      const price =
-        product.discountedPrice > 0 ? product.discountedPrice : product.price;
-
-      return {
-        product_id: product._id,
-        vendor_id: product.vendor_id,
-        quantity: i.quantity,
-        price,
-        total: price * i.quantity,
-
-        productName: product.name,
-        category: product.category,
-        sku: product.sku,
-      };
-    });
-
-    const subTotal = allItems.reduce((sum, i) => sum + i.total, 0);
-    const grandTotal = subTotal + tax - discount;
-
-    // ✅ Create main Order
+  if (product.stock < cartItem.quantity) {
+    throw new Error(`${product.name} is out of stock`);
+  }
+}
     const order = await Order.create(
       [
         {
           orderNumber: "ORD-" + Date.now(),
           user_id,
           customer_id,
-          totalItems: allItems.reduce((sum, i) => sum + i.quantity, 0),
+          totalItems: items.reduce((sum, i) => sum + i.quantity, 0),
           subTotal,
           tax,
           discount,
@@ -93,30 +254,23 @@ export const createOrder = async (req, res) => {
 
     const createdOrder = order[0];
 
-    // ✅ Split vendor wise
     const vendorWise = {};
-    allItems.forEach((item) => {
+
+    items.forEach((item) => {
       const vendorId = item.vendor_id.toString();
       if (!vendorWise[vendorId]) vendorWise[vendorId] = [];
-
-      vendorWise[vendorId].push({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.price,
-        total: item.total,
-        productName: item.productName,
-        category: item.category,
-        sku: item.sku,
-      });
+      vendorWise[vendorId].push(item);
     });
 
-    // ✅ Create VendorOrders + OrderItems
     const vendorOrders = await Promise.all(
       Object.keys(vendorWise).map(async (vendorId) => {
         const vendorItems = vendorWise[vendorId];
-        const vendorSubTotal = vendorItems.reduce((sum, i) => sum + i.total, 0);
 
-        // ✅ VendorOrder
+        const vendorSubTotal = vendorItems.reduce(
+          (sum, i) => sum + i.itemTotal,
+          0
+        );
+
         const vendorOrder = await VendorOrder.create(
           [
             {
@@ -126,8 +280,8 @@ export const createOrder = async (req, res) => {
               items: vendorItems.map((i) => ({
                 product_id: i.product_id,
                 quantity: i.quantity,
-                price: i.price,
-                total: i.total,
+                price: i.discountedPrice,
+                total: i.itemTotal,
               })),
               subTotal: vendorSubTotal,
               vendorEarning: vendorSubTotal * 0.9,
@@ -141,7 +295,6 @@ export const createOrder = async (req, res) => {
 
         const createdVendorOrder = vendorOrder[0];
 
-        // ✅ OrderItems
         const orderItemsDocs = vendorItems.map((i) => ({
           order_id: createdOrder._id,
           vendorOrder_id: createdVendorOrder._id,
@@ -154,20 +307,25 @@ export const createOrder = async (req, res) => {
           sku: i.sku,
 
           quantity: i.quantity,
-          price: i.price,
-          total: i.total,
+          price: i.discountedPrice,
+          total: i.itemTotal,
 
-          orderStatus: createdVendorOrder.orderStatus,
+          orderStatus: "pending",
           orderedAt: createdOrder.createdAt,
         }));
 
         await OrderItem.insertMany(orderItemsDocs, { session });
-
+         for (const item of vendorItems) {
+  await Product.updateOne(
+    { _id: item.product_id },
+    { $inc: { stock: -item.quantity } },
+    { session }
+  );
+}
         return createdVendorOrder;
       })
     );
 
-    // ✅ Commit transaction
     await session.commitTransaction();
     session.endSession();
 
@@ -181,6 +339,8 @@ export const createOrder = async (req, res) => {
     await session.abortTransaction();
     session.endSession();
 
+    console.error("ORDER CREATION FAILED:", error);
+
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -189,9 +349,6 @@ export const createOrder = async (req, res) => {
   }
 };
 
-
-
-//fetch all main orders
 export const getallOrders = async(req,res)=>{
     try{
 const {fdate,tdate,page,limit} = req.query;
@@ -362,17 +519,48 @@ export const updateCustomerprofile =async(req,res)=>{
          res.status(500).json({message:"Server error", error: error.message});   
 }
 };
-////get customer details by id
+////get customer details by userid
 export const getCustomerbyId =async(req,res)=>{
     try{
-    const userId = req.loggedUser._id;
+    const {userId} = req.params;
     const customer = await Customer.findOne({user_id:userId});
-    res.status(200).json({ success: true, data: customer });
+    res.status(200).json({ success: true,customer});
     }
     catch(error){
          res.status(500).json({message:"Server error", error: error.message});   
 }
 }
+/////add new address using customerid
+export const addAddress = async (req, res) => {
+  const { customerId } = req.params;
+  const { street, city, state, pincode } = req.body;
+
+  const customer = await Customer.findById(customerId);
+  if (!customer) return res.status(404).json({ message: "Customer not found" });
+
+  customer.address.push({ street, city, state, pincode });
+  await customer.save();
+
+  res.status(200).json(customer.address);
+};
+////////edit address
+export const editAddress = async (req, res) => {
+  const { customerId, addressId } = req.params;
+  const { street, city, state, pincode } = req.body;
+
+  const customer = await Customer.findById(customerId);
+  const addr = customer.address.id(addressId);
+
+  if (!addr) return res.status(404).json({ message: "Address not found" });
+
+  addr.street = street;
+  addr.city = city;
+  addr.state = state;
+  addr.pincode = pincode;
+
+  await customer.save();
+  res.status(200).json(customer.address);
+};
 
 /////TODAYS ORDERS
 export const getTodayOrderlist = async(req,res)=>{
@@ -421,4 +609,38 @@ export const getallproducts = async(req,res)=>{
    catch(error){
          res.status(500).json({message:"Server error", error: error.message});   
 }
-} 
+} ;
+
+
+
+////orders
+export const getCustomerOrders = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    const orders = await Order.find({ customer_id: customerId })
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Failed to fetch orders" });
+  }
+};
+
+export const getOrderDetails = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+  
+    const vendorOrders = await VendorOrder.find({ order_id: orderId }).populate("vendor_id", "shopName").populate("items.product_id", "name images");
+
+    res.json({ success: true, order, vendorOrders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Failed to fetch order details" });
+  }
+};
+

@@ -1,13 +1,61 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch,useSelector  } from "react-redux";
+import { addToCart,updateQty  } from "../../../redux/cartSlice";
+import {useAuth} from '../../../components/context/AuthContext'
 
 function ProductCard({ product }) {
-  const [qty, setQty] = useState(0);
   const outOfStock = product.stock === 0;
+  const navigate = useNavigate();
+const {user,customerId}  =useAuth();
+const dispatch =useDispatch();
+const cart = useSelector((state) => state.cart.cart);
+
+const getId = (p) => (typeof p === "object" ? p._id : p);
+
+const cartItem = cart?.items?.find(
+  (i) => getId(i.product_id) === product._id
+);
+
+const qty = cartItem ? cartItem.quantity : 0;
+const handleAdd = (e) => {
+  e.stopPropagation();
+  dispatch(addToCart({
+    user_id: user.user_id,
+    customer_id: customerId,
+    vendor_id: product.vendor_id,
+    product_id: product._id,
+    quantity: 1,
+     price: product.discountedPrice, 
+    productName: product.name,       
+    images: product.images,
+  }));
+};
+
+const increaseQty = (e) => {
+  e.stopPropagation();
+  dispatch(updateQty({
+    user_id: user.user_id,
+    product_id: product._id,
+    quantity: qty + 1,
+  }));
+};
+
+const decreaseQty = (e) => {
+  e.stopPropagation();
+ 
+    dispatch(updateQty({
+      user_id: user.user_id,
+      product_id: product._id,
+      quantity: qty - 1,
+    }));
+  
+};
 
   return (
  
-    <div
-      className={`bg-white rounded-2xl shadow-sm p-3 group transition-all duration-300
+    <div onClick={()=>navigate(`/customer/product/${product._id}`)}
+      className={`bg-white cursor-pointer rounded-2xl shadow-sm p-3 group transition-all duration-300
       ${outOfStock ? "opacity-60 grayscale pointer-events-none" : "hover:shadow-xl hover:-translate-y-1"}`}
     >
       {/* image + discount */}
@@ -52,34 +100,15 @@ function ProductCard({ product }) {
             Stock Not Available
           </button>
         ) : qty === 0 ? (
-          <button
-            onClick={() => setQty(1)}
-            className="w-full bg-(--dark-teal) text-white py-2 rounded-lg hover:bg-(--mid-teal)"
-          >
-            Add to Cart
-          </button>
+         <button onClick={handleAdd} className="w-full bg-(--dark-teal) text-white py-2 rounded-lg">
+    Add to Cart
+  </button>
         ) : (
-       <div className="flex items-center justify-between border border-(--secondary) rounded-xl overflow-hidden w-full">
-  
-  <button
-    onClick={() => setQty(Math.max(0, qty - 1))}
-    className="flex-1 py-2 text-lg font-bold text-(--dark-teal) bg-red-100 "
-  >
-    −
-  </button>
-
-  <span className="w-12 text-center font-semibold text-(--mid-teal) text-lg">
-    {qty}
-  </span>
-
-  <button
-    onClick={() => setQty(qty + 1)}
-    className="flex-1 py-2 text-lg font-bold text-(--dark-teal) bg-green-100 "
-  >
-    +
-  </button>
-
-</div>
+   <div className="flex items-center justify-between border rounded-xl overflow-hidden">
+    <button onClick={decreaseQty} className="flex-1 py-2 bg-red-100">−</button>
+    <span className="w-12 text-center font-semibold">{qty}</span>
+    <button onClick={increaseQty} className="flex-1 py-2 bg-green-100">+</button>
+  </div>
 
         )}
       </div>

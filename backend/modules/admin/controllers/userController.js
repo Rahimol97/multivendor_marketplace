@@ -203,8 +203,8 @@ await Vendor.findOneAndUpdate(
       //set token  in cookie
       res.cookie("token",token,{
      httpOnly: true,
-    //secure: false,
-    //sameSite: "lax",
+    //  secure: false,
+    //  sameSite: "lax",
      secure: true,        //// REQUIRED for production,
      sameSite: "none",     ////REQUIRED for cross-site cookies  
       }); 

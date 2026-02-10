@@ -22,7 +22,6 @@ function Ordertrack() {
     const getordertrackdetails = async()=>{
         try{
 const response = await api.get(`/customer/ordertrack?fdate=${datef}&tdate=${datet}&orderstatus=${orderstatus}&page=${page}&limit=${limit}`);
-    console.log(response.data.orders);
      setTrackdet(response.data.orders); 
      setPagination(response.data.pagination);  
 }

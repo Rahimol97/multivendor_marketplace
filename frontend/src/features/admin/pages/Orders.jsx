@@ -28,7 +28,6 @@ function Orders() {
   const getOrders = async()=>{
 try{
   const response = await api.get(`/customer/orders?fdate=${datef}&tdate=${datet}&page=${pagec}&limit=${limit}`);
-    console.log(response.data.orders);
 
   setOrders(response.data.orders);
   setPaginationcount(response.data.pagination);

@@ -37,7 +37,6 @@ return () => clearInterval(interval); // cleanup
 const getDashboardStat =async()=>{
   try{
 const response = await api.get("/admin/dashboard-stats")
- console.log(response.data);
  setStats({
   totalCustomers:response.data.data.customerCount,
   totalVendors:response.data.data.vendorCount,
@@ -55,7 +54,6 @@ alert(`Error: ${error.message}`);
 const todayOrders = async()=>{
   try{
    const response = await api.get("customer/todayorders")
-  console.log(response.data.final);
  Setorders(response.data.final);
   }
     catch(error){

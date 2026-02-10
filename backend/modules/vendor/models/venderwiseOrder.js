@@ -45,10 +45,26 @@ const vendorOrderSchema = new mongoose.Schema(
         },
         orderStatus:{
             type:String,
-            enum:["pending", "confirmed", "shipped", "delivered", "cancelled"],
+            enum:["pending", "confirmed","packed","shipped", "delivered", "cancelled"],
             default:"pending",
             index: true
         },
+            statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: [
+            "pending",
+            "confirmed",
+            "packed",
+            "shipped",
+            "delivered",
+            "cancelled",
+          ],
+        },
+        date: { type: Date, default: Date.now },
+      },
+    ],
     },
     {timestamps:true}
 );
