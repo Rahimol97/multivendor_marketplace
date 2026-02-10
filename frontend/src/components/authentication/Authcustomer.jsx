@@ -19,7 +19,7 @@ function Authcustomer() {
   pincode: ""
   })
   const inputclass  = "w-full px-4 py-3 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)";
-  const { setUser } = useAuth();
+  const { setUser,fetchuser } = useAuth();
 
   const[errors,setErrors] = useState({});
   const[servermessage,setServermessage] =useState("");
@@ -105,7 +105,7 @@ if(!signup && response.status===200){
   if(response.data.user.role !== "customer"){
     setServermessage("Access denied. Not an customer .");
 }  else{
-  setUser(response.data.user);
+ await fetchuser();   
 navigate("/customer");
 }
 }

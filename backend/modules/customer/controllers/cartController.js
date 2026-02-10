@@ -23,7 +23,7 @@ export const addtoCart = async(req,res)=>{
     let {user_id,customer_id,vendor_id,product_id,quantity} = req.body; 
     if(!user_id || !customer_id || !vendor_id|| !product_id || !quantity)
     {
-        res.status(400).json({ message: "All fields are required"});
+      return   res.status(400).json({ message: "All fields are required"});
     }
     if (quantity < 1) quantity = 1;
    const product = await Product.findById(product_id);
@@ -95,7 +95,7 @@ else{
 }
    calculateTotals(cart);
     await cart.save();
-
+const populatedCart = await populateCart(cart);
     return res.status(200).json({ message: "Item added to cart", cart:populatedCart});
  
 }

@@ -25,6 +25,7 @@ export const fetchCart = createAsyncThunk("cart/fetch", async (userId) => {
 });
 
 export const addToCart = createAsyncThunk("cart/add", async (itemData) => {
+  console.log(itemData)
   const res = await api.post("/cart/add", itemData);
   return res.data.cart;
 });

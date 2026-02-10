@@ -64,7 +64,7 @@ setUser(response.data);
 };
 
   return (
-   <AuthContext.Provider value = {{user,setUser, customerId, customerAddress,customerMobile,fetchCustomerProfile,loading}}>
+   <AuthContext.Provider value = {{user,setUser, customerId, customerAddress,customerMobile,fetchCustomerProfile,fetchuser,loading}}>
     {children}
    </AuthContext.Provider>
   )
