@@ -56,8 +56,24 @@ function CustomerNavbar() {
 
           {/* logo */}
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-(--bright-teal) flex items-center justify-center font-bold text-(--dark-teal)">
-              M
+            <div className="w-9 h-9 rounded-lg  flex items-center justify-center font-bold text-(--dark-teal)">
+                <div className="mx-auto w-16 h-10 rounded-full text-(--accent) 
+              flex items-center justify-center"
+            >
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 7l1.664 9.983A2 2 0 006.642 19h10.716a2 2 0 001.978-2.017L21 7M5 7h14M9 11v4M15 11v4"
+                />
+              </svg>
+            </div>
             </div>
             <span className="text-lg font-bold tracking-wide">MultiNest</span>
           </div>
@@ -80,8 +96,9 @@ function CustomerNavbar() {
 
           {/* rightside links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link to ="/customer/contactus"><button className="hover:text-(--bright-teal) cursor-pointer">Contact Us </button></Link> 
-           <Link to ="/customer/aboutus"><button  className="hover:text-(--bright-teal) cursor-pointer">About Us</button></Link> 
+            <Link to ="/customer" className="hover:text-(--bright-teal) cursor-pointer">Home </Link> 
+            <Link to ="/customer/contactus" className="hover:text-(--bright-teal) cursor-pointer">Contact Us </Link> 
+           <Link to ="/customer/aboutus"  className="hover:text-(--bright-teal) cursor-pointer">About Us</Link> 
 
            <Link to ="/customer/product/cart" ><button className="relative hover:text-(--bright-teal)">
               <ShoppingCartIcon className="w-7 h-7" />
@@ -118,7 +135,7 @@ function CustomerNavbar() {
       <div
   className={`fixed bottom-0 left-0 w-full md:hidden bg-(--light-bg) border-t border-gray-200 flex justify-around py-2 z-40 transition-transform duration-300
   ${showFooter ? "translate-y-0" : "translate-y-full"}`}
->  <a href="/" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
+>  <a href="/customer" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
           <HomeIcon className="w-6 h-6" />
           <span className="text-xs">Home</span>
         </a>
@@ -141,7 +158,7 @@ function CustomerNavbar() {
 </Link>
 
 
-        <a href="/orders" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
+        <a href="/customer/product/orders" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
           <ClipboardDocumentListIcon className="w-6 h-6" />
           <span className="text-xs">Orders</span>
         </a>

@@ -64,57 +64,40 @@ export  const vendorCommisson = async(req,res)=>{
 };
 
 //////vendor-wise commission report 
-export const vendorCommissionReport = async(req,res)=>{
-    try{
-const globalDoc =await Commission.findOne();
-const globalCommission = globalDoc?.globalCommissionPercentage||0;
-//vendor override
-const vendorCommissionDocs = await VendorCommission.find();
-const vendorCommissionMap = new Map(
-    vendorCommissionDocs.map((x)=>[String(x.vendor_id), x.commission])
-);
-///delvered total vendors
-const totals = await OrderItem.aggregate([
-      { $match: { orderStatus: "delivered" } },
-      {
-        $group: {
-          _id: "$vendor_id",
-          completedAmount: { $sum: "$total" },
-        },
-      },
-    ]);
-  const final = await Promise.all(
-      totals.map(async (t) => {
-        const vendor = await Vendor.findById(t._id).select("vendorName shopName");
+export const vendorCommissionReport = async (req, res) => {
+  try {
+    // Get global commission
+    const globalDoc = await Commission.findOne();
+    const globalCommission = globalDoc?.globalCommissionPercentage || 0;
 
-        const vendorName =
-          vendor?.vendorName || vendor?.shopName || "Unknown Vendor";
-
-        const vendorCommission = vendorCommissionMap.get(String(t._id)) ?? null;
-
-        const effectiveCommission =
-          vendorCommission !== null ? vendorCommission : globalCommission;
-
-        const platformShare = Math.round(
-          (t.completedAmount * effectiveCommission) / 100
-        );
-
-        return {
-          vendorId: t._id,
-          vendorName,
-          completedAmount: t.completedAmount,
-          vendorCommission, // null or number
-          effectiveCommission, // ✅ textbox should show this
-          platformShare,
-        };
-      })
+    // Get all approved vendors
+    const vendors = await Vendor.find({ status: "approved" })
+      .select("shopName vendorName");
+    // Get vendor-specific commissions
+    const vendorCommissionDocs = await VendorCommission.find();
+    const vendorCommissionMap = new Map(
+      vendorCommissionDocs.map(v => [String(v.vendor_id), v.commission])
     );
+
+    // Prepare response
+    const final = vendors.map(vendor => {
+      const overrideCommission = vendorCommissionMap.get(String(vendor._id));
+
+      return {
+        vendorId: vendor._id,
+        shopName: vendor.shopName,
+        vendorName: vendor.vendorName,
+        commissionEditable: overrideCommission ?? globalCommission, // shown in textbox
+        isOverride: overrideCommission != null
+      };
+    });
 
     res.status(200).json({
       success: true,
       globalCommission,
       final,
     });
+
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

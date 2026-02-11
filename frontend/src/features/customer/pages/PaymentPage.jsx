@@ -14,18 +14,18 @@ function PaymentPage() {
 
   const checkoutType = location.state?.type;
   const selectedProductId = location.state?.productId;
-
 const getId = (p) => (typeof p === "object" ? p._id : p);
 const singleItem = cart.items.find(
   (item) => getId(item.product_id) === selectedProductId
 );
   const TAX_RATE = 0.05;
   const singleTotal = singleItem
-    ? (singleItem.price * singleItem.quantity) * (1 + TAX_RATE)
+    ? (singleItem.price * singleItem.quantity) * (1 + TAX_RATE) - (singleItem.itemDiscount
+)
     : 0;
 
+const singletax = (singleItem.price * singleItem.quantity) * TAX_RATE;
   const amount = checkoutType === "cart" ? cart.grandTotal : singleTotal;
-
   const [method, setMethod] = useState("cod");
 const [showCardForm, setShowCardForm] = useState(false);
   const [popup, setPopup] = useState(null);
@@ -65,11 +65,22 @@ const orderPayload = {
       category: singleItem.product_id.category,
       sku: singleItem.product_id.sku
       }],
-  subTotal: cart.subTotal,
-  tax: cart.tax,
-  discount: cart.discount,
-  grandTotal: cart.grandTotal,
-   deliveryAddress: {
+subTotal: checkoutType === "cart"
+    ? cart.subTotal
+    : singleItem.itemSubTotal,
+
+  tax: checkoutType === "cart"
+    ? cart.tax
+    : singletax,
+
+  discount: checkoutType === "cart"
+    ? cart.discount
+    : singleItem.itemDiscount,
+
+  grandTotal: checkoutType === "cart"
+    ? cart.grandTotal
+    : singleTotal,
+       deliveryAddress: {
     street: cart.deliveryAddress?.street,
     city: cart.deliveryAddress?.city,
     state: cart.deliveryAddress?.state,
@@ -77,8 +88,6 @@ const orderPayload = {
     mobile: cart.mobile
   },
  
-  tax: cart.tax || 0,
-  discount: cart.discount || 0
  
 };
   //////payment 

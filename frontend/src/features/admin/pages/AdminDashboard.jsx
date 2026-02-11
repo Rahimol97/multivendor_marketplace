@@ -1,6 +1,10 @@
 import { UsersIcon,UserGroupIcon ,ClockIcon ,CurrencyDollarIcon,BanknotesIcon, ShoppingBagIcon} from '@heroicons/react/24/outline'
 import {useEffect,useState} from 'react'
 import api from '../../../api';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend
+} from "recharts";
 
 function AdminDashboard() {
 const[stats,setStats] =useState({
@@ -14,7 +18,8 @@ const[stats,setStats] =useState({
 
 })
 const [orders,Setorders] =useState([]);
-
+const [earningsData, setEarningsData] = useState([]);
+const [statusData, setStatusData] = useState([]);
 const statusColors = {
 pending:"bg-yellow-100 text-yellow-700",
 confirmed: "bg-blue-100 text-blue-700",
@@ -22,10 +27,21 @@ shipped: "bg-purple-100 text-purple-700",
 delivered: "bg-green-100 text-green-700",
 cancelled: "bg-red-100 text-red-700",
 };
+const COLORS = ["#00C49F", "#FFBB28", "#FF8042", "#0088FE", "#A28BFE"];
+
+const fetchCharts = async () => {
+  const earnRes = await api.get("/admin/earningslast7days");
+  setEarningsData(earnRes.data.data);
+
+  const statusRes = await api.get("/admin/orderstatusstats");
+  setStatusData(statusRes.data.data);
+};
 useEffect(() => {
 
 getDashboardStat();//initial call
 todayOrders();
+ fetchCharts();
+
 //refresh every 5 second
 const interval = setInterval(() => {
  getDashboardStat(); 
@@ -38,7 +54,8 @@ return () => clearInterval(interval); // cleanup
 const getDashboardStat =async()=>{
   try{
 const response = await api.get("/admin/dashboard-stats")
- setStats({
+console.log(response)
+setStats({
   totalCustomers:response.data.data.customerCount,
   totalVendors:response.data.data.vendorCount,
   pendingVendors:response.data.data.pendingVendors,
@@ -177,7 +194,50 @@ color="text-emerald-600 bg-emerald-100 "
           </div>
          </div>
         </div>
-  
+  {/* charts  */}
+<div className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  {/* Last 7 Days Earnings */}
+  <div className="bg-(--secondary) rounded-xl p-6 shadow-md">
+    <h3 className="font-semibold mb-4">Last 7 Days Platform Earnings</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={earningsData}>
+        <XAxis dataKey="_id" />
+        <YAxis />
+        <Tooltip />
+ <Bar dataKey="total" radius={[6,6,0,0]}>
+    {earningsData.map((entry, index) => (
+      <Cell key={`bar-${index}`} fill={COLORS[index % COLORS.length]} />
+    ))}
+  </Bar>
+        </BarChart>
+    </ResponsiveContainer>
+  </div>
+
+  {/* Order Status Pie */}
+  <div className="bg-(--secondary) rounded-xl p-6 shadow-md">
+    <h3 className="font-semibold mb-4">Orders by Status</h3>
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={statusData}
+          dataKey="count"
+          nameKey="_id"
+          outerRadius={100}
+          label
+        >
+         {statusData.map((entry, index) => (
+      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+    ))}
+        </Pie>
+        <Legend />
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+
+</div>
+
   </div>
 
 

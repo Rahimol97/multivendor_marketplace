@@ -7,14 +7,19 @@ import {
   UsersIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
-  XMarkIcon,CubeIcon,ChatBubbleLeftRightIcon 
+  XMarkIcon,CubeIcon,ChatBubbleLeftRightIcon,PowerIcon
 } from "@heroicons/react/24/outline";
 import api from  '../../api'
+import {useAuth} from '../context/AuthContext'
+import {useNavigate} from 'react-router-dom'
 
 function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
  const [ordersOpen, setOrdersOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
- const menuItemClass = ({ isActive }) =>
+  const { user,setUser, loading }= useAuth();
+  const navigate = useNavigate();
+
+  const menuItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg text-base font-medium transition
      ${
        isActive
@@ -30,6 +35,12 @@ function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
     console.log("Badge error");
   }
 };
+  const handlelogout =async()=>{
+   
+    await api.post("/users/logout");
+    setUser(null);
+    navigate("/admin/authadmin");
+  }
 
 useEffect(() => {
   fetchUnreadCount();
@@ -64,7 +75,24 @@ useEffect(() => {
         <div className="flex items-center justify-between px-4 py-5">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center text-primary font-bold">
-              M
+             {/* logo */}
+              <div className="mx-auto w-16 h-10 rounded-full text-(--accent) 
+              flex items-center justify-center"
+            >
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 7l1.664 9.983A2 2 0 006.642 19h10.716a2 2 0 001.978-2.017L21 7M5 7h14M9 11v4M15 11v4"
+                />
+              </svg>
+            </div>
             </div>
             {!collapsed && (
               <span className="text-lg font-bold font-serif">
@@ -179,6 +207,8 @@ useEffect(() => {
             <ChartBarIcon className="w-6 h-6" />
             {!collapsed && "Reports"}
           </NavLink>
+     <button onClick={handlelogout} className="text-red-500 md:hidden text-xl p-6 flex items-center gap-3"><PowerIcon className="w-8 h-8" ></PowerIcon><span>Logout</span></button>
+
         </nav>
       </aside>
     </>

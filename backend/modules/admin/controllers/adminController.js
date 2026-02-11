@@ -6,8 +6,9 @@ import Commission from "../models/commissionModel.js"
 import VendorCommission from "../models/vendorwiseCommissionModel.js"
 import Category from "../models/categoryModel.js"
 import ContactMessage from "../../customer/models/contactModel.js";
-
-
+import VendorOrder from '../../vendor/models/venderwiseOrder.js'
+import Order from '../../customer/models/customerOrderModel.js'
+import OrderCommission from '../models/orderCommisionModel.js'
 export const getadminDashboardStats =async(req,res)=>{
     try{
        const customerCount  = await Customer.countDocuments({ isActive: true })
@@ -20,89 +21,121 @@ export const getadminDashboardStats =async(req,res)=>{
 
       const end = new Date();
       end.setHours(23, 59, 59, 999);
-      const todaySales = await OrderItem.aggregate([
-        {
-            $match:{
-                orderStatus : "delivered",
-                orderedAt :{$gte:start,$lte:end},
-            },
-        },
-        {
-            $group:{
-              _id:null,
-              todaySalesAmount:{$sum:"$total"},
-              todayOrders: { $sum: 1 },
-              todayQuantity: { $sum: "$quantity" },
-            },
-        },
-      ]);
-      const todaySalesAmount = todaySales[0]?.todaySalesAmount || 0;
-      const todayOrders = todaySales[0]?.todayOrders || 0;
-    const todayQuantity = todaySales[0]?.todayQuantity || 0;
-//////todayplatform earnings 
-const globalCommissionDoc = await Commission.findOne();
-const globalCommission = globalCommissionDoc?.globalCommissionPercentage || 0;
-const todayPlatform = await OrderItem.aggregate([
-    {
-        $match:{
-            orderStatus:"delivered",
-            orderedAt:{$gte:start,$lte:end},
-        },
+const todaySales = await OrderItem.aggregate([
+  {
+    $match: {
+      orderStatus: "delivered",
+      orderedAt: { $gte: start, $lte: end },
     },
-    //vendor commission
-    {
-        $lookup:{
-         from: "vendorcommissions",
-         localField: "vendor_id",
-         foreignField: "vendor_id",
-         as: "vendorCommission",
-        },
-    },
-    {
-       $addFields: {
-      commissionPercentage: {
-        $ifNull: [
-          { $arrayElemAt: ["$vendorCommission.commission", 0] },
-          globalCommission, // fallback
-        ],
-      },
-    }, 
-    },
-   ///platform earning for each item
-    {
-        $addFields: {
-      platformEarning: {
-        $divide: [
-          { $multiply: ["$total", "$commissionPercentage"] },
-          100,
-        ],
-      },
-    },
-    },
-    //////vendor payout
-    {
-  $addFields: {
-    vendorPayout: { $subtract: ["$total", "$platformEarning"] }
-  }
-},
-    //total platform earning for today
-     {
+  },
+  {
     $group: {
       _id: null,
-      todayPlatformEarnings: { $sum: "$platformEarning" },
-    todayVendorPayout: { $sum: "$vendorPayout" },
+      todaySalesAmount: { $sum: "$total" },
+      todayOrders: { $addToSet: "$order_id" }, // unique orders
+      todayQuantity: { $sum: "$quantity" },
     },
   },
 ]);
-const todayPlatformEarnings = todayPlatform[0]?.todayPlatformEarnings || 0;
-const todayVendorPayout = todayPlatform[0]?.todayVendorPayout || 0;
-       res.status(201).json({success:true,data:{customerCount,vendorCount,pendingVendors,activeVendors, todaySalesAmount, todayOrders,  todayQuantity,todayPlatformEarnings,todayVendorPayout}})
+
+const todaySalesAmount = todaySales[0]?.todaySalesAmount || 0;
+const todayOrdersCount = todaySales[0]?.todayOrders?.length || 0;
+const todayQuantity = todaySales[0]?.todayQuantity || 0;
+
+//////todayplatform earnings 
+const todayEarnings = await VendorOrder.aggregate([
+  {
+    $match: {
+      orderStatus: "delivered",
+      updatedAt: { $gte: start, $lte: end },
+    },
+  },
+  {
+    $group: {
+      _id: null,
+      todayPlatformEarnings: { $sum: "$platformCommisson" },
+      todayVendorPayout: { $sum: "$vendorEarning" },
+    },
+  },
+]);
+
+const todayPlatformEarnings = todayEarnings[0]?.todayPlatformEarnings || 0;
+const todayVendorPayout = todayEarnings[0]?.todayVendorPayout || 0;
+//////todat ordercount
+const todayOrdersCountMain = await Order.countDocuments({
+  createdAt: { $gte: start, $lte: end },
+});
+       
+res.status(201).json({success:true,data:{customerCount,vendorCount,pendingVendors,activeVendors, todaySalesAmount, todayOrdersCount ,  todayQuantity,todayPlatformEarnings,todayVendorPayout}})
     
     }
     catch(error){
         res.status(500).json({message:error.message})
     }
 }
+
+////////// lat 7 days
+export const getLast7DaysEarnings = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const earnings = await VendorOrder.aggregate([
+      {
+        $match: {
+          orderStatus: "delivered",
+          updatedAt: { $gte: sevenDaysAgo, $lte: today },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" } },
+          total: { $sum: "$platformCommisson" },
+        },
+      },
+    ]);
+
+    //  Fill missing days
+    const result = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sevenDaysAgo);
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toISOString().split("T")[0];
+
+      const found = earnings.find(e => e._id === dateStr);
+      result.push({ _id: dateStr, total: found ? found.total : 0 });
+    }
+
+    res.json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+//////////
+export const getOrderStatusStats = async (req, res) => {
+  try {
+    const stats = await OrderItem.aggregate([
+      {
+        $group: {
+          _id: "$orderStatus",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
 ////pending approvals
 export const pendingApprovals = async(req,res)=>{
     try{
@@ -358,3 +391,94 @@ export const getUnreadCount = async (req, res) => {
     res.status(500).json({ message: "Error getting count" });
   }
 };
+///////sales report 
+
+
+export const getVendorSalesReport = async (req, res) => {
+  try {
+    const { fdate, tdate, page = 1, limit = 10 } = req.query;
+
+    const match = {};
+    if (fdate && tdate) {
+      const start = new Date(fdate);
+      const end = new Date(tdate);
+      end.setHours(23, 59, 59, 999);
+      match.createdAt = { $gte: start, $lte: end };
+    }
+
+    const skip = (page - 1) * limit;
+
+    const report = await OrderCommission.aggregate([
+      { $match: match },
+
+      // Join VendorOrder to get subtotal (gross sales)
+      {
+        $lookup: {
+          from: "vendororders",
+          localField: "vendorOrderId",
+          foreignField: "_id",
+          as: "vendorOrder",
+        },
+      },
+      { $unwind: "$vendorOrder" },
+
+      // Group vendor-wise
+      {
+        $group: {
+          _id: "$vendorId",
+          totalOrders: { $sum: 1 },
+          grossSales: { $sum: "$vendorOrder.subTotal" },
+          totalCommission: { $sum: "$commissionAmount" },
+          totalVendorEarning: { $sum: "$vendorEarning" },
+        },
+      },
+
+      // Vendor details
+      {
+        $lookup: {
+          from: "vendors",
+          localField: "_id",
+          foreignField: "_id",
+          as: "vendor",
+        },
+      },
+      { $unwind: "$vendor" },
+
+      {
+        $project: {
+          vendorId: "$_id",
+          shopName: "$vendor.shopName",
+          vendorName: "$vendor.vendorName",
+          totalOrders: 1,
+          grossSales: 1,
+          totalCommission: 1,
+          totalVendorEarning: 1,
+        },
+      },
+
+      { $sort: { grossSales: -1 } },
+      { $skip: skip },
+      { $limit: Number(limit) },
+    ]);
+
+    const totalVendors = await OrderCommission.aggregate([
+      { $match: match },
+      { $group: { _id: "$vendorId" } },
+      { $count: "count" },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      report,
+      pagination: {
+        total: totalVendors[0]?.count || 0,
+        page: Number(page),
+        totalPages: Math.ceil((totalVendors[0]?.count || 0) / limit),
+      },
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+

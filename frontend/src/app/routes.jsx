@@ -23,7 +23,7 @@ import BlockedList from "../features/vendor/pages/BlockedList"
 import Lowstock from "../features/vendor/pages/Lowstock";
 import VendorOrders from "../features/vendor/pages/VendorOrders";
 import VendorDashboard from "../features/vendor/pages/VendorDashboard";
-
+import VendorReports from "../features/vendor/pages/Reports";
 ///////////customer pages
 import Home from "../features/customer/pages/Home"
 import ProductDetails from "../features/customer/ProductDetails";
@@ -89,7 +89,9 @@ path: "/",
  {path:"/vendor/productlist",element:<ProductList />},
  {path:"/vendor/blockedlist",element:<BlockedList />},
  {path:"/vendor/lowstock",element:<Lowstock />},
- {path:"/vendor/vendororder",element:<VendorOrders/>}
+ {path:"/vendor/vendororder",element:<VendorOrders/>},
+ {path:"/vendor/reports",element:<VendorReports/>},
+ 
 ],
   
 },

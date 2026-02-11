@@ -7,6 +7,9 @@ import mongoose from 'mongoose'
 import orderItem from '../../vendor/models/orderItem.js'
 import ContactMessage from '../models/contactModel.js'
 import Review from '../models/review.js'
+import Commission from '../../admin/models/commissionModel.js'
+import OrderCommission from '../../admin/models/orderCommisionModel.js'
+import VendorCommission from '../../admin/models/vendorwiseCommissionModel.js'
 
 // export const createOrder = async (req, res) => {
 //   const session = await mongoose.startSession();
@@ -212,6 +215,9 @@ export const createOrder = async (req, res) => {
       tax = 0,
       discount = 0,
       grandTotal = 0,
+       razorpayOrderId,
+  razorpayPaymentId,
+  paidAt
     } = req.body;
 
     if (!customer_id || !items?.length) {
@@ -234,6 +240,8 @@ for (const cartItem of items) {
     throw new Error(`${product.name} is out of stock`);
   }
 }
+console.log(tax)
+console.log(discount)
     const order = await Order.create(
       [
         {
@@ -247,6 +255,9 @@ for (const cartItem of items) {
           grandTotal,
           paymentMethod,
           paymentStatus,
+          razorpayOrderId,
+      razorpayPaymentId,
+      paidAt,
           orderStatus: "placed",
           deliveryAddress,
         },
@@ -273,6 +284,25 @@ for (const cartItem of items) {
           0
         );
 
+ //////Get global commission
+    const globalDoc = await Commission.findOne().session(session);
+    const globalCommission = globalDoc?.globalCommissionPercentage || 0;
+
+    // 🔹 Get vendor specific commission
+    const vendorCommissionDoc = await VendorCommission.findOne({
+      vendor_id: vendorId,
+    }).session(session);
+
+    const commissionPercent =
+      vendorCommissionDoc?.commission ?? globalCommission;
+
+    const commissionAmount = Math.round(
+      (vendorSubTotal * commissionPercent) / 100
+    );
+
+    const vendorEarning = vendorSubTotal - commissionAmount;
+/////////
+   
         const vendorOrder = await VendorOrder.create(
           [
             {
@@ -286,8 +316,8 @@ for (const cartItem of items) {
                 total: i.itemTotal,
               })),
               subTotal: vendorSubTotal,
-              vendorEarning: vendorSubTotal * 0.9,
-              platformCommisson: vendorSubTotal * 0.1,
+              vendorEarning:vendorEarning,
+              platformCommisson: commissionAmount,
               vendorPaymentStatus: paymentStatus,
               orderStatus: "pending",
             },
@@ -296,7 +326,21 @@ for (const cartItem of items) {
         );
 
         const createdVendorOrder = vendorOrder[0];
-
+//////////commsiion
+        await OrderCommission.create(
+      [
+        {
+          vendorId: vendorId,
+          vendorOrderId: createdVendorOrder._id,
+          orderId: createdOrder._id,
+          commissionPercent,
+          commissionAmount,
+          vendorEarning,
+        },
+      ],
+      { session }
+    );
+/////////
         const orderItemsDocs = vendorItems.map((i) => ({
           order_id: createdOrder._id,
           vendorOrder_id: createdVendorOrder._id,

@@ -21,11 +21,12 @@ function Commission() {
 
         ///vendor-report
         const vendorRes = await api.get("/admin/vendor-commission-report")
-        const formatted = vendorRes.data.final.map((v) => ({
-          ...v,
-          commissionEditable: v.effectiveCommission,
-        }));
-        setVendors(formatted);
+      const formatted = vendorRes.data.final.map((v) => ({
+  ...v,
+  commissionEditable: v.commissionEditable,
+}));
+        setVendors(vendorRes.data.final);
+        console.log(formatted)
       }
       catch (err) {
         console.log(err);
@@ -63,56 +64,48 @@ function Commission() {
   };
 
   /////handle textbox vendoewise
-  const handleVendorCommissionChange = (vendorId, value) => {
-    setVendors((prev) =>
-      prev.map((v) => {
-        if (v.vendorId !== vendorId) return v;
-
-        // allow empty for backspace
-        const commissionValue = value === "" ? "" : Number(value);
-
-        const platformShare =
-          commissionValue === ""
-            ? 0
-            : Math.round((v.completedAmount * commissionValue) / 100);
-        return {
-          ...v,
-          commissionEditable: commissionValue,
-          platformShare,
-        };
-      })
-    );
-  };
+ const handleVendorCommissionChange = (vendorId, value) => {
+  setVendors(prev =>
+    prev.map(v =>
+      v.vendorId === vendorId
+        ? { ...v, commissionEditable: value === "" ? "" : Number(value) }
+        : v
+    )
+  );
+};
   //////vendorwise update 
-  const handleVendorUpdate = async (vendorId) => {
-    try {
-      const vendor = vendors.find((v) => v.vendorId === vendorId);
-      if (vendor.commissionEditable === "" || vendor.commissionEditable === null) {
-        setToastType("error");
-        setToastmsg("Commission is required");
-        return;
-      }
+ const handleVendorUpdate = async (vendorId) => {
+  try {
+    const vendor = vendors.find((v) => v.vendorId === vendorId);
 
-      if (vendor.commissionEditable < 0 || vendor.commissionEditable > 100) {
-        setToastType("error");
-        setToastmsg("Commission must be between 0 and 100");
-        return;
-      }
-       
-      await api.put(`/admin/vendorwise-commision/${vendorId}`, {
-        commission: Number(vendor.commissionEditable),
-      });
-
-      setToastType("success");
-      setToastmsg("Vnendor commission updated");
-      const vendorRes = await api.get("/admin/vendor-commission-report");
-      setVendors(vendorRes.data.final.map(v => ({ ...v, commissionEditable: v.effectiveCommission })));
-    } catch (err) {
-      console.log(err);
+    if (vendor.commissionEditable === "" || vendor.commissionEditable == null) {
       setToastType("error");
-      setToastmsg("Server error");
+      setToastmsg("Commission is required");
+      return;
     }
-  };
+
+    if (vendor.commissionEditable < 0 || vendor.commissionEditable > 100) {
+      setToastType("error");
+      setToastmsg("Commission must be between 0 and 100");
+      return;
+    }
+
+    await api.put(`/admin/vendorwise-commision/${vendorId}`, {
+      commission: Number(vendor.commissionEditable),
+    });
+
+    setToastType("success");
+    setToastmsg("Vendor commission updated");
+
+    const vendorRes = await api.get("/admin/vendor-commission-report");
+    setVendors(vendorRes.data.final); 
+  } catch (err) {
+    console.log(err);
+    setToastType("error");
+    setToastmsg("Server error");
+  }
+};
+
   return (
     <div className='min-h-screen bg-(--secondary) px-4 py-6 space-y-8 rounded-lg md:px-8  '>
       {/* toastmsg */}
@@ -162,9 +155,11 @@ function Commission() {
         <div className="space-y-4 md:hidden">
          {vendors.map((item)=>(
        <div key={item.vendorId} className="border rounded-xl p-4 space-y-2">
-            <p className="font-semibold">{item.vendorName}</p>
-            <p className="text-sm text-(--text)">
-              Completed: ₹₹{item.completedAmount}
+            <p className="font-semibold">{item.shopName}</p>
+           
+            <p className="font-semibold text-(--accent)">
+             {item.vendorName}
+
             </p>
 
             <div className="flex items-center gap-2">
@@ -183,10 +178,6 @@ function Commission() {
               <span>%</span>
             </div>
 
-            <p className="font-semibold text-(--accent)">
-              Platform: ₹{item.platformShare}
-
-            </p>
 
             <button onClick={() => handleVendorUpdate(item.vendorId)} className="text-(--text) text-sm px-4 py-3 bg-(--accent) rounded-lg">Update</button>
           </div>
@@ -198,16 +189,16 @@ function Commission() {
           <table className="min-w-full text-sm">
             <thead>
               <tr className="border-b border-b-(--accent) text-(--text)">
-                <th className="py-3 text-left">Vendor</th>
-                <th className="text-left">Completed Amount</th>
+                <th className="py-3 text-left">Shopname</th>
+                <th className="text-left">vendoename</th>
                 <th className="text-left">Commission %</th>
-                <th className="text-left">Platform Share</th>
                 <th className="text-left">Action</th>
               </tr>
             </thead>
             <tbody>
               {vendors.map((item) => (
               <tr key={item.vendorId} className='border-b border-b-slate-300'>
+                <td className="py-4 font-medium">{item.shopName}</td>
                 <td className="py-4 font-medium">{item.vendorName}</td>
                 <td>₹{item.completedAmount}</td>
                 <td>
@@ -217,8 +208,7 @@ function Commission() {
             handleVendorCommissionChange(item.vendorId, e.target.value)
           } className="w-20 border border-slate-300 rounded px-2 py-1 focus:outline-none" />
                 </td>
-                <td className="font-semibold">
-                  ₹{item.platformShare}</td>
+               
                 <td>
   <button
           onClick={() => handleVendorUpdate(item.vendorId)}

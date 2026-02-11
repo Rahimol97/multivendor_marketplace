@@ -6,15 +6,14 @@ const orderCommissionSchema  = new mongoose.Schema(
     type: mongoose.Schema.Types.ObjectId,
      ref: "Vendor",
     required: true },
-    amount: 
-    {
-    type: Number, 
-    required: true
- },    
+vendorOrderId: { type: mongoose.Schema.Types.ObjectId, ref: "VendorOrder", required: true },
+
+  orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order", required: true },
  commissionPercent: { type: Number, required: true },
  commissionAmount: { type: Number, required: true },
  vendorEarning: { type: Number, required: true },
- 
+ isPaidToAdmin: { type: Boolean, default: false },
+  paidAt: { type: Date },
     },
      { timestamps: true }
 
