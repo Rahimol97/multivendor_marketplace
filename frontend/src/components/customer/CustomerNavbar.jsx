@@ -158,10 +158,10 @@ function CustomerNavbar() {
 </Link>
 
 
-        <a href="/customer/product/orders" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
+        <Link to="/customer/product/orders" className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
           <ClipboardDocumentListIcon className="w-6 h-6" />
           <span className="text-xs">Orders</span>
-        </a>
+        </Link>
 
         <button onClick={() => setProfileOpen(true)} className="flex flex-col items-center text-(--dark-teal) hover:text-(--bright-teal)">
           <UserCircleIcon className="w-6 h-6" />

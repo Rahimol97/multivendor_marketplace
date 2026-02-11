@@ -205,8 +205,8 @@ await Vendor.findOneAndUpdate(
      httpOnly: true,
     //  secure: false,
     //  sameSite: "lax",
-     secure: true,        //// REQUIRED for production,
-     sameSite: "none",     ////REQUIRED for cross-site cookies  
+    secure: true,        //// REQUIRED for production,
+    sameSite: "none",     ////REQUIRED for cross-site cookies  
       }); 
      res.status(200).json({message:"login successful",token:token,user:{id:user._id,username:user.username,role:user.role,lastLoginAt: user.lastLoginAt}});
 }
