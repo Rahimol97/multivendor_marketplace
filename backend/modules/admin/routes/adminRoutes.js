@@ -1,8 +1,9 @@
 import express from 'express'
-import {getadminDashboardStats,pendingApprovals,updateVendorStatus,getAllCustomers,getAllVendors,blockUser,getvendorslist} from "../controllers/adminController.js"
+import {getadminDashboardStats,pendingApprovals,updateVendorStatus,getAllCustomers,getAllVendors,blockUser,getvendorslist,getAllMessages, markAsRead, deleteMessage,getUnreadCount} from "../controllers/adminController.js"
 import { setGlobalCommission,vendorCommisson,getcommisssion ,vendorCommissionReport} from '../controllers/globalCommissionController.js'
 import { categoryupload } from '../../../middlewares/categoryupload.js';
 import { addcategory,getcategories,getactivecategories,updatecategory,blockunblockcat } from '../controllers/adminController.js'
+
 const router = express.Router();
 router.get("/dashboard-stats",getadminDashboardStats );
 router.get('/pendings',pendingApprovals);
@@ -23,4 +24,11 @@ router.get("/getcategories",getcategories);
 router.get("/getactivecategories",getactivecategories);
 router.patch("/toggleblock/:id",blockunblockcat);
 router.put("/updatecategory/:id", categoryupload.single("image"), updatecategory);
+
+////////getcontactdetails
+
+router.get("/contact",  getAllMessages);
+router.put("/contact/:id/read",  markAsRead);
+router.delete("/contact/:id",  deleteMessage);
+router.get("/unreadcontact",  getUnreadCount);
 export default router;

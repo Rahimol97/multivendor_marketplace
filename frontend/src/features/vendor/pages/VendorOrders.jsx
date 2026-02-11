@@ -44,7 +44,6 @@ export default function VendorOrders() {
       alert("Status update failed");
     }
   };
-
   if (loading) return <div className="p-6">Loading orders...</div>;
 
   return (
@@ -60,6 +59,7 @@ export default function VendorOrders() {
               <th className="p-4">Items</th>
               <th className="p-4">Earning</th>
               <th className="p-4">Payment</th>
+              <th className="p-4">Payment method</th>
               <th className="p-4">Status</th>
               <th className="p-4">Update</th>
             </tr>
@@ -67,7 +67,7 @@ export default function VendorOrders() {
 
           <tbody>
             {orders.map((order) => (
-              <tr key={order._id} className="border-t hover:bg-gray-50">
+              <tr key={order._id} className="border-t border-t-slate-100 hover:bg-gray-50">
                 {/* Order Number */}
                 <td className="p-4 font-medium">
                   #{order.order_id?.orderNumber}
@@ -112,7 +112,11 @@ export default function VendorOrders() {
                     {order.vendorPaymentStatus}
                   </span>
                 </td>
-
+ <td className="p-4">
+                  <span className="px-2 py-1 text-xs font-semibold capitalize">
+                    {order.order_id.paymentMethod}
+                  </span>
+                </td>
                 {/* Current Status */}
                 <td className="p-4">
                   <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold capitalize">

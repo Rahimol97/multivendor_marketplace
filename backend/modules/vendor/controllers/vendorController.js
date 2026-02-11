@@ -376,7 +376,7 @@ const userId = req.loggedUser._id;
 const vendor = await Vendor.findOne({user_id:userId})
 const orders = await VendorOrder.find({vendor_id:vendor._id}).populate("customer_id", "customerName mobile address")
 .populate("items.product_id", "name price")
-      .populate("order_id", "orderNumber paymentStatus status createdAt");
+      .populate("order_id", "orderNumber paymentStatus paymentMethod status createdAt");
 
 res.status(200).json({ success: true, data: orders });
 }
@@ -408,6 +408,11 @@ export const updateVendorOrderStatus = async (req, res) => {
     vendorOrder.statusHistory.push({ status });
 
     await vendorOrder.save();
+    ////////orderitrm status update
+   await OrderItem.updateMany(
+  { vendorOrder_id: vendorOrderId },
+  { orderStatus: status }
+);
 //////Emit real-time update to that specific customer
         const io = getIO();
         const customerRoom = vendorOrder.customer_id._id.toString();

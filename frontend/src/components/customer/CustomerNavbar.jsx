@@ -80,8 +80,8 @@ function CustomerNavbar() {
 
           {/* rightside links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="/contact" className="hover:text-(--bright-teal)">Contact Us</a>
-            <a href="/about" className="hover:text-(--bright-teal)">About Us</a>
+            <Link to ="/customer/contactus"><button className="hover:text-(--bright-teal) cursor-pointer">Contact Us </button></Link> 
+           <Link to ="/customer/aboutus"><button  className="hover:text-(--bright-teal) cursor-pointer">About Us</button></Link> 
 
            <Link to ="/customer/product/cart" ><button className="relative hover:text-(--bright-teal)">
               <ShoppingCartIcon className="w-7 h-7" />
@@ -166,9 +166,12 @@ function CustomerNavbar() {
             </div>
 
             <nav className="flex flex-col gap-4 text-(--mid-teal) font-medium">
-              <Link to="/profile"  className="hover:text-(--bright-teal)">Personal Info</Link>
-              <Link to="/customer/product/orders" className="hover:text-(--bright-teal)">My Orders</Link>
-              <Link to="/customer/product/wishlist" className="hover:text-(--bright-teal)">Wishlist</Link>
+              {/* <Link to="/profile"  className="hover:text-(--bright-teal)">Personal Info</Link> */}
+              <Link to="/customer/product/orders" className="hover:text-(--bright-teal) cursor-pointer">My Orders</Link>
+              <Link to="/customer/product/wishlist" className="hover:text-(--bright-teal) cursor-pointer">Wishlist</Link>
+             <Link to ="/customer/contactus" className="hover:text-(--bright-teal) cursor-pointer">Contact Us</Link> 
+           <Link to ="/customer/aboutus" className="hover:text-(--bright-teal) cursor-pointer">About Us</Link> 
+
               <button onClick={handlelogout} className="text-red-500">Logout</button>
             </nav>
           </div>

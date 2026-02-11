@@ -27,10 +27,10 @@ function OrderdetailsPage() {
   useEffect(() => {
   if (!order?.customer_id) return;
 
-  //  Join customer's private room
+
 socket.emit("joinOrderRoom", order.customer_id);
 
-  //  Listen for live status updates
+  //  live status updates
   const handleStatusUpdate = ({ vendorOrderId, status }) => {
 
     setVendors(prev =>
@@ -69,7 +69,7 @@ socket.emit("joinOrderRoom", order.customer_id);
      <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
        <div className="relative flex items-center justify-center h-14 px-4">
      
-         {/* Back Button (absolute so it doesn’t affect centering) */}
+         {/* Back Button  */}
          <button
            onClick={() => navigate(-1)}
            className="absolute left-4 bg-white p-2 rounded-full shadow"
@@ -105,6 +105,15 @@ socket.emit("joinOrderRoom", order.customer_id);
         <div>
           <p className="font-medium">{item.product_id.name}</p>
           <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+       <button
+        onClick={() =>
+          navigate(`/customer/product/productreview/${order._id}/${item.product_id._id}`)
+        }
+        className="mt-2 text-sm bg-(--accent) text-white px-3 py-1 rounded-md cursor-pointer hover:opacity-90"
+      >
+        Rate Product
+      </button>
+       
         </div>
       </div>
     ))}

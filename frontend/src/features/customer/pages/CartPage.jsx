@@ -125,10 +125,10 @@ function CartPage() {
             <span>₹{cart.discount?.toFixed(2) || "0.00"}</span>
           </div>
 
-          <div className="flex justify-between mb-2">
+          {/* <div className="flex justify-between mb-2">
             <span>Shipping</span>
             <span>{shipping_fee === 0 ? "Free" : `₹${shipping_fee}`}</span>
-          </div>
+          </div> */}
 
           <hr className="my-3" />
 

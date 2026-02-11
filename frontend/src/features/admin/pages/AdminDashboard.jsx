@@ -14,6 +14,7 @@ const[stats,setStats] =useState({
 
 })
 const [orders,Setorders] =useState([]);
+
 const statusColors = {
 pending:"bg-yellow-100 text-yellow-700",
 confirmed: "bg-blue-100 text-blue-700",
@@ -54,7 +55,7 @@ alert(`Error: ${error.message}`);
 const todayOrders = async()=>{
   try{
    const response = await api.get("customer/todayorders")
- Setorders(response.data.final);
+   Setorders(response.data.final);
   }
     catch(error){
 alert(`Error: ${error.message}`);
@@ -129,7 +130,7 @@ color="text-emerald-600 bg-emerald-100 "
               <td>
               <div className='flex flex-center gap-3'>
                 <img
-                  src={item.product_id?.images?.[0]}
+                  src={item.product_id?.images?.[0].url}
                     alt={item.productName}
                     className="w-8 h-8 rounded-md"
                   />

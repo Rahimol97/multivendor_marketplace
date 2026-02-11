@@ -1,7 +1,7 @@
 import express from 'express'
 import { getallOrders,deleteOrders,updateCustomerprofile,getCustomerbyId,
     getTodayOrderlist,getvendororders,getorderwisetrack,getallproducts,editAddress,
-    addAddress,getCustomerOrders,getOrderDetails } from '../controllers/customerController.js'
+    addAddress,getCustomerOrders,getOrderDetails,sendContactMessage,reviewproduct } from '../controllers/customerController.js'
 import {authMiddleware} from '../../../middlewares/authmiddleware.js'
 import {addwishlist,deletewishlist,getWishlist} from '../controllers/wishlistController.js'
 import Customer from '../models/customerModel.js'
@@ -26,7 +26,11 @@ router.get("/wishlist", authMiddleware, getWishlist);
 //////orders
 router.get("/customerorders/:customerId", authMiddleware, getCustomerOrders);
 router.get("/orderdetails/:orderId", authMiddleware, getOrderDetails);
+//////contagepage 
+router.post("/contactus", sendContactMessage);
+///////review product 
 
+router.post("/addreview",authMiddleware,reviewproduct);
 /////get customerid
 router.get("/by-user/:id",async(req,res)=>{
    try {

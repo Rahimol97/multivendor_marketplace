@@ -5,6 +5,7 @@ import OrderItem from "../../vendor/models/orderItem.js"
 import Commission from "../models/commissionModel.js"
 import VendorCommission from "../models/vendorwiseCommissionModel.js"
 import Category from "../models/categoryModel.js"
+import ContactMessage from "../../customer/models/contactModel.js";
 
 
 export const getadminDashboardStats =async(req,res)=>{
@@ -312,4 +313,48 @@ export const blockunblockcat = async (req, res) => {
   category.isBlocked = !category.isBlocked;
   await category.save();
   res.json(category);
+};
+///////getcontactmessages
+
+export const getAllMessages = async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({ createdAt: -1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching messages" });
+  }
+};
+
+// mark as read
+export const markAsRead = async (req, res) => {
+  try {
+    const msg = await ContactMessage.findByIdAndUpdate(
+      req.params.id,
+      { status: "read" },
+      { new: true }
+    );
+    res.json(msg);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating status" });
+  }
+};
+
+// deletemessages
+export const deleteMessage = async (req, res) => {
+  try {
+    await ContactMessage.findByIdAndDelete(req.params.id);
+    res.json({ message: "Message deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting message" });
+  }
+};
+
+///unread messages
+export const getUnreadCount = async (req, res) => {
+  try {
+    const count = await ContactMessage.countDocuments({ status: "new" });
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ message: "Error getting count" });
+  }
 };

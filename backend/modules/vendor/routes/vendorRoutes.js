@@ -3,6 +3,14 @@ import { addProduct,getproductById,blockProduct,getvendorwiseProduct,updateProdu
    unblockProduct,getVendorbyId,productWiseSalesReport,getvendorwiseProductblocked,lowstockproducts,getproductBybrand,updateVendorOrderStatus} from '../controllers/vendorController.js'
 import {upload} from '../../../middlewares/upload.js'
 import {authMiddleware} from '../../../middlewares/authmiddleware.js'
+import {
+  getVendorSummary,
+  getSalesChart,
+  getOrderStatusBreakdown,
+  getTopProducts,
+  getRecentOrders
+} from "../controllers/vendorDashboardController.js";
+
 const router = express.Router();
 router.get("/getprofile",getVendorbyId)
 router.put("/updateprofile",updateVendorprofile)
@@ -21,6 +29,13 @@ router.get("/orders",authMiddleware,getVendorwiseCustomerorder)
 /////////vendor orderstatus update
 router.patch("/orderstatusupdate/:vendorOrderId",updateVendorOrderStatus)
 
+///////////vendor dashboards
+
+router.get("/summary",authMiddleware, getVendorSummary);
+router.get("/sales-chart",authMiddleware, getSalesChart);
+router.get("/order-status",authMiddleware, getOrderStatusBreakdown);
+router.get("/top-products" ,authMiddleware, getTopProducts);
+router.get("/recent-orders" ,authMiddleware, getRecentOrders);
 
 router.get("/prduct-wise-sales-report",productWiseSalesReport)
 export default router;

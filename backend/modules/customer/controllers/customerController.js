@@ -5,6 +5,8 @@ import Customer from '../models/customerModel.js'
 import OrderItem from '../../vendor/models/orderItem.js'
 import mongoose from 'mongoose'
 import orderItem from '../../vendor/models/orderItem.js'
+import ContactMessage from '../models/contactModel.js'
+import Review from '../models/review.js'
 
 // export const createOrder = async (req, res) => {
 //   const session = await mongoose.startSession();
@@ -286,7 +288,7 @@ for (const cartItem of items) {
               subTotal: vendorSubTotal,
               vendorEarning: vendorSubTotal * 0.9,
               platformCommisson: vendorSubTotal * 0.1,
-              vendorPaymentStatus: "pending",
+              vendorPaymentStatus: paymentStatus,
               orderStatus: "pending",
             },
           ],
@@ -643,4 +645,63 @@ export const getOrderDetails = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to fetch order details" });
   }
 };
+
+/////////contact page 
+export const sendContactMessage = async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const newMessage = new ContactMessage({ name, email, subject, message });
+    await newMessage.save();
+
+    res.status(201).json({ message: "Message sent successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+/////////review product
+
+export const reviewproduct = async (req, res) => {
+  try {
+    const { orderId, productId, rating, comment } = req.body;
+    const userId = req.loggedUser._id; // from auth middleware
+
+    // Prevent duplicate review for same order+product
+    const existing = await Review.findOne({ orderId, productId, userId });
+    if (existing) return res.status(400).json({ message: "Already reviewed" });
+
+    const review = await Review.create({ orderId, productId, userId, rating, comment });
+
+    // Recalculate product rating
+    const stats = await Review.aggregate([
+      { $match: { productId: review.productId } },
+      {
+        $group: {
+          _id: "$productId",
+          avgRating: { $avg: "$rating" },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    await Product.findByIdAndUpdate(productId, {
+      ratingAvg: stats[0].avgRating,
+      ratingCount: stats[0].count,
+    });
+
+    res.status(201).json({ message: "Review added" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
 

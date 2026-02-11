@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import { NavLink } from "react-router-dom";
 import {
   HomeIcon,
@@ -7,18 +7,37 @@ import {
   UsersIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
-  XMarkIcon,CubeIcon 
+  XMarkIcon,CubeIcon,ChatBubbleLeftRightIcon 
 } from "@heroicons/react/24/outline";
+import api from  '../../api'
 
 function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
  const [ordersOpen, setOrdersOpen] = useState(false);
-  const menuItemClass = ({ isActive }) =>
+  const [unreadCount, setUnreadCount] = useState(0);
+ const menuItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg text-base font-medium transition
      ${
        isActive
          ? "bg-(--accent) text-(--primary)"
          : "text-(--text) hover:bg-(--secondary) hover:text-(--accent)"
      }`;
+
+     const fetchUnreadCount = async () => {
+  try {
+    const res = await api.get("/admin/unreadcontact");
+    setUnreadCount(res.data.count);
+  } catch (err) {
+    console.log("Badge error");
+  }
+};
+
+useEffect(() => {
+  fetchUnreadCount();
+
+  // auto refresh every 30 seconds
+  const interval = setInterval(fetchUnreadCount, 30000);
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <>
@@ -89,6 +108,31 @@ function AdminSidebar({ collapsed, mobileOpen, setMobileOpen }) {
             <CubeIcon  className="w-6 h-6" />
             {!collapsed && "Category"}
           </NavLink>
+<NavLink
+  to="/admin/readmessage"
+  className={(props) => `${menuItemClass(props)} relative`}
+  onClick={() => setMobileOpen(false)}
+>
+  <div className="flex items-center gap-3 w-full relative">
+    <div className="relative">
+      <ChatBubbleLeftRightIcon className="w-6 h-6" />
+
+      {collapsed && unreadCount > 0 && (
+        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-(--secondary)" />
+      )}
+    </div>
+
+    {!collapsed && <span>User Messages</span>}
+
+    {!collapsed && unreadCount > 0 && (
+      <span className="ml-auto bg-red-600 text-white text-[10px] min-w-4.5 h-4.5 flex items-center justify-center rounded-full px-1">
+        {unreadCount}
+      </span>
+    )}
+  </div>
+</NavLink>
+
+
 
         {/* orders */}
         <div >
