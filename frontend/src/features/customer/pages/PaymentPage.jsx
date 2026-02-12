@@ -11,20 +11,30 @@ function PaymentPage() {
     const { user,customerId } = useAuth();
 
   const { cart } = useSelector(state => state.cart);
-
+console.log(cart);
   const checkoutType = location.state?.type;
   const selectedProductId = location.state?.productId;
-const getId = (p) => (typeof p === "object" ? p._id : p);
+const getId = (p) => {
+  if (!p) return null;
+  return typeof p === "object" ? String(p._id) : String(p);
+};
 const singleItem = cart.items.find(
-  (item) => getId(item.product_id) === selectedProductId
+  (item) => getId(item.product_id) === String(selectedProductId)
 );
   const TAX_RATE = 0.05;
-  const singleTotal = singleItem
-    ? (singleItem.price * singleItem.quantity) * (1 + TAX_RATE) - (singleItem.itemDiscount
-)
-    : 0;
 
-const singletax = (singleItem.price * singleItem.quantity) * TAX_RATE;
+const singleSubTotal = singleItem
+  ? singleItem.price * singleItem.quantity
+  : 0;
+
+const singletax = singleItem
+  ? singleSubTotal * TAX_RATE
+  : 0;
+
+const singleTotal = singleItem
+  ? singleSubTotal + singletax - (singleItem.itemDiscount || 0)
+  : 0;
+
   const amount = checkoutType === "cart" ? cart.grandTotal : singleTotal;
   const [method, setMethod] = useState("cod");
 const [showCardForm, setShowCardForm] = useState(false);
