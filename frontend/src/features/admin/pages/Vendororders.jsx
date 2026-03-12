@@ -60,7 +60,7 @@ function Vendororders() {
       <input type="date" value={datet} onChange={(e)=>setDatet(e.target.value)} className='px-4 py-3 w-full  rounded-lg border border-slate-200 focus:outline-none'  />
       <select value={vendorid} onChange={(e)=>setVendorid(e.target.value)} className='px-4 py-3 w-full  rounded-lg border border-slate-200 focus:outline-none'  
       >
-        <option value="">select vendor</option>
+        <option className='bg-(--light-bg)' value="">select vendor</option>
        {shopname.map((shop)=>(
       <option key={shop._id} value={shop._id}>{shop.shopName}</option>
        ))}
@@ -70,7 +70,7 @@ function Vendororders() {
       <div className='w-full min-w-0 rounded-lg shadow-md mt-6'>
       <div className='w-full overflow-x-auto'>
      <table className='text-sm w-full whitespace-nowrap'>
-   <thead  className="bg-gray-50">
+   <thead  className="bg-(--light-bg)">
     <tr>
          <th className='px-4 py-3'>OrderNo</th>
          <th className='px-4 py-3'>OrderDate</th>
@@ -92,8 +92,8 @@ function Vendororders() {
         <td className='px-3 py-3'>{order.createdAt}</td>
         <td className='px-3 py-3'>{order.customer_id.customerName}</td>
         <td className='px-3 py-3'>
-            <table className="w-full  bg-slate-50 rounded-lg shadow-sm text-sm">
-    <thead className="bg-gray-200">
+            <table className="w-full  bg-(--light-bg) rounded-lg shadow-sm text-sm">
+    <thead className="bg-(--light-bg)">
       <tr>
         <th className="px-2 py-1">Image</th>
         <th className="px-2 py-1">Product</th>
@@ -108,7 +108,7 @@ function Vendororders() {
         <tr key={item._id}>
           <td className="px-2 py-1">
             <img
-              src={item?.product_id?.image || "https://via.placeholder.com/50"}
+              src={item?.product_id?.images?.[0].url }
               alt={item?.productName}
               className="w-14 h-14"
             />

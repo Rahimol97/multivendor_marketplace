@@ -50,9 +50,9 @@ export default function VendorOrders() {
     <div className="p-4 md:p-6">
       <h1 className="text-2xl font-bold mb-6">Vendor Orders</h1>
 
-      <div className="overflow-x-auto bg-white shadow rounded-xl">
+      <div className="overflow-x-auto  shadow rounded-xl">
         <table className="min-w-full text-sm text-left">
-          <thead className="bg-gray-100 text-gray-600 ">
+          <thead className="bg-(--secondary) text-(--text) ">
             <tr>
               <th className="p-4">Order</th>
               <th className="p-4">Customer</th>
@@ -67,7 +67,7 @@ export default function VendorOrders() {
 
           <tbody>
             {orders.map((order) => (
-              <tr key={order._id} className="border-t border-t-slate-100 hover:bg-gray-50">
+              <tr key={order._id} className="border-t border-t-slate-100 hover:bg-(--secondary)">
                 {/* Order Number */}
                 <td className="p-4 font-medium">
                   #{order.order_id?.orderNumber}

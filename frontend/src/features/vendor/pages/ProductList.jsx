@@ -62,7 +62,7 @@ showToast(err.response.data.message, "success" );
         <h2 className='text-2xl font-bold mb-4'>My products</h2>
     <div className='flex flex-col sm:flex-row gap-3 mb-4'>
       <input type="text" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Search by name, brand, SKU" className='border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--accent) rounded-md md:w-1/2 w-full'/>   
-    <select value={category} onChange={(e)=>setCategory(e.target.value)} className='border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--accent) rounded-md ' >
+    <select value={category} onChange={(e)=>setCategory(e.target.value)} className='border bg-(--secondary) border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--accent) rounded-md ' >
           <option value="">All</option>
           {pcategory.map((cat) => (
             <option key={cat.name}>{cat.name}</option>
@@ -74,7 +74,7 @@ showToast(err.response.data.message, "success" );
    <div className='w-full min-w-0 rounded-lg shadow-md mt-6'>
            <div className='w-full overflow-x-auto'>
  <table className='text-sm w-full whitespace-nowrap'>
-   <thead  className="bg-gray-100">
+   <thead className='bg-(--secondary) text-(--text) '>
     <tr>
          <th className='px-4 py-3'>Product</th>
          <th className='px-4 py-3'>category</th>

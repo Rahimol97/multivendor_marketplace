@@ -1,7 +1,7 @@
 import express from 'express'
 import { getallOrders,deleteOrders,updateCustomerprofile,getCustomerbyId,
     getTodayOrderlist,getvendororders,getorderwisetrack,getallproducts,editAddress,
-    addAddress,getCustomerOrders,getOrderDetails,sendContactMessage,reviewproduct } from '../controllers/customerController.js'
+    addAddress,getCustomerOrders,getOrderDetails,sendContactMessage,reviewproduct,getReviewByOrderProduct } from '../controllers/customerController.js'
 import {authMiddleware} from '../../../middlewares/authmiddleware.js'
 import {addwishlist,deletewishlist,getWishlist} from '../controllers/wishlistController.js'
 import Customer from '../models/customerModel.js'
@@ -31,6 +31,8 @@ router.post("/contactus", sendContactMessage);
 ///////review product 
 
 router.post("/addreview",authMiddleware,reviewproduct);
+router.get("/getreview/:orderId/:productId", authMiddleware, getReviewByOrderProduct);
+
 /////get customerid
 router.get("/by-user/:id",async(req,res)=>{
    try {

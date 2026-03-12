@@ -88,7 +88,7 @@ const showToast = (message,type="success")=>{
            <div className='w-full overflow-x-auto'> 
         <table className=" bg-(--secondary) text-sm w-full whitespace-nowrap">
           <thead>
-            <tr className="bg-slate-100">
+            <tr className="bg-(--light-bg)">
               <th className="p-3">Image</th>
               <th className="p-3">Name</th>
               <th className="p-3">Status</th>

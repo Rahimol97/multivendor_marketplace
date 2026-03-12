@@ -50,13 +50,13 @@ if (!item) {
   return (
     <div className="bg-(--light-bg) min-h-screen p-4  ">
 {/* arrow icon */}
-<div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
+<div className="fixed top-0 left-0 w-full bg-(--light-bg) z-50 shadow-sm">
   <div className="relative flex items-center justify-center h-14 px-4">
 
     {/* Back Button (absolute so it doesn’t affect centering) */}
     <button
       onClick={() => navigate(-1)}
-      className="absolute left-4 bg-white p-2 rounded-full shadow"
+      className="absolute left-4 bg-(--light-bg) p-2 rounded-full shadow"
     >
       <ArrowLeftIcon className="w-6 h-6" />
     </button>
@@ -66,7 +66,7 @@ if (!item) {
 
       {/* Step 1 - Active */}
       <div className="flex items-center gap-2 text-[rgb(1,135,144)]">
-        <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[rgb(1,135,144)] text-white">
+        <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[rgb(1,135,144)] text-(--light-bg)">
           1
         </div>
         <span>Review</span>
@@ -86,7 +86,7 @@ if (!item) {
   </div>
 </div>
  
-      <div className="bg-white rounded-xl p-4 shadow mt-12">
+      <div className="bg-(--light-bg) rounded-xl p-4 shadow mt-12">
         <img src={item.product_id.images?.[0]?.url} className="w-full h-48 object-cover rounded-lg" />
         <h2 className="font-bold mt-3">{item.productName}</h2>
         <p>Qty: {item.quantity}</p>
@@ -95,22 +95,22 @@ if (!item) {
       </div>
 
     
-      <div className="bg-white mt-4 p-4 rounded-xl shadow">
+      <div className="bg-(--light-bg) mt-4 p-4 rounded-xl shadow">
         <p className="font-semibold text-green-700">
           Estimated Delivery: {deliveryDate.toDateString()}
         </p>
       </div>
 
       {/* addreess */}
-      <div className="bg-white mt-4 p-4 rounded-xl shadow flex justify-between items-center">
+      <div className="bg-(--light-bg) mt-4 p-4 rounded-xl shadow flex justify-between items-center">
         <div>
           <p className="font-bold">Deliver To</p>
     {displayAddress  ? (
-  <div className="rounded text-sm text-gray-600">
+  <div className="rounded text-sm ">
     Delivering to: {displayAddress .street}, {displayAddress .city}, {displayAddress .state} - {displayAddress .pincode}
     <br />
 <div className="flex items-center gap-2 mt-2">
-    <PhoneIcon className="h-4 w-4 text-gray-500" />
+    <PhoneIcon className="h-4 w-4 " />
     <span>{mobile}</span>
   </div>
     </div>
@@ -128,7 +128,7 @@ if (!item) {
       </div>
 
    
-      <div className="bg-white mt-4 p-4 rounded-xl shadow">
+      <div className="bg-(--light-bg) mt-4 p-4 rounded-xl shadow">
         <div className="flex justify-between">
           <span>Price</span>
           <span>₹{subTotal.toFixed(2)}</span>
@@ -172,7 +172,7 @@ if (!item) {
     </div>
   </div>
 )}
-   <div className="fixed bottom-0 right-0 border-t border-t-slate-200  w-full bg-white z-40 shadow-sm">
+   <div className="fixed bottom-0 right-0 border-t border-t-slate-200  w-full bg-(--light-bg) z-40 shadow-sm">
         <div className="relative flex items-center  h-14 px-4">
          <p className="text-2xl font-semibold">₹{grandTotal.toFixed(2)}</p>
           <button onClick={() => navigate("/customer/product/payment", { state: { type: "single",  productId: item.product_id._id,} })} className="absolute right-4 bg-(--dark-teal) px-3 py-2 text-white rounded-md shadow">Pay Now

@@ -20,7 +20,7 @@ function AboutUs() {
       <div className="grid md:grid-cols-2 gap-10 items-center mb-16">
         <div>
           <h2 className="text-2xl font-semibold mb-3">Our Mission</h2>
-          <p className="text-gray-700 leading-relaxed">
+          <p className=" leading-relaxed">
             We empower small and large vendors to reach more customers while giving shoppers
             a secure, diverse, and affordable online shopping experience.
           </p>
@@ -49,9 +49,9 @@ function AboutUs() {
 }
 function Feature({ title, text }) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+    <div className="bg-(--light-bg) p-6 rounded-xl shadow hover:shadow-md transition">
       <h3 className="font-bold text-lg mb-2 text-(--dark-teal)">{title}</h3>
-      <p className="text-gray-600 text-sm">{text}</p>
+      <p className=" text-sm">{text}</p>
     </div>
   );
 }

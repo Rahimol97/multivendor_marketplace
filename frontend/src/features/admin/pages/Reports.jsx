@@ -28,7 +28,7 @@ function Reports() {
   }, [page]);
 
   return (
-    <div className="p-4 md:p-6 bg-gray-100 min-h-screen">
+    <div className="p-4 md:p-6 bg-(--light-bg) min-h-screen">
       <h2 className="text-xl font-bold mb-4">Vendor Sales Report</h2>
 
       {/* Date Filter */}
@@ -39,10 +39,10 @@ function Reports() {
       </div>
 
       {/* Desktop Table */}
-      <div className="w-full min-w-0 bg-white rounded-lg shadow-md mt-6">
+      <div className="w-full min-w-0 bg-(--light-bg) rounded-lg shadow-md mt-6">
           <div className='w-full overflow-x-auto'>
         <table className="text-sm w-full whitespace-nowrap">
-          <thead className="bg-gray-100 text-left">
+          <thead className="bg-(--light-bg) text-left">
             <tr>
               <th className="p-3">Vendor</th>
               <th>Orders</th>

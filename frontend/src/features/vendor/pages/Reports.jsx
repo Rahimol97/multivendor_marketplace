@@ -28,7 +28,7 @@ function Reports() {
   }, [page]);
 
   return (
-    <div className="p-4 md:p-6 bg-gray-100 min-h-screen">
+    <div className="p-4 md:p-6  min-h-screen">
       <h2 className="text-xl font-bold mb-4">Product Sales Report</h2>
 
       <div className="flex gap-3 mb-4 flex-wrap">
@@ -37,10 +37,10 @@ function Reports() {
         <button onClick={fetchReport} className="bg-(--accent) text-white px-4 py-2 rounded">Filter</button>
       </div>
 
-      <div className="w-full min-w-0 bg-white rounded-lg shadow-md mt-6">
+      <div className="w-full min-w-0  rounded-lg shadow-md mt-6">
         <div className="w-full overflow-x-auto">
           <table className="text-sm w-full whitespace-nowrap">
-         <thead className="bg-gray-100 text-left">
+         <thead className="bg-(--secondary) text-(--text) text-left">
   <tr>
     <th className="p-3">Product</th>
     <th>Category</th>

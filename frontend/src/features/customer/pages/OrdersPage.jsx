@@ -38,14 +38,14 @@ socket.on("orderStatusUpdated", handleUpdate);
   }, [customerId]);
 
   return (
-    <div className="p-4 bg-gray-100 min-h-screen">
-     <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
+    <div className="p-4 bg-(--light-bg) min-h-screen">
+     <div className="fixed top-0 left-0 w-full bg-(--light-bg) z-50 shadow-sm">
        <div className="relative flex items-center justify-center h-14 px-4">
      
          {/* Back Button (absolute so it doesn’t affect centering) */}
          <button
            onClick={() => navigate(-1)}
-           className="absolute left-4 bg-white p-2 rounded-full shadow"
+           className="absolute left-4 bg-(--light-bg) p-2 rounded-full shadow"
          >
            <ArrowLeftIcon className="w-6 h-6" />
          </button>
@@ -59,7 +59,7 @@ socket.on("orderStatusUpdated", handleUpdate);
         <div
           key={order._id}
           onClick={() => navigate(`/customer/product/orderdetails/${order._id}`)}
-          className="bg-white p-4 rounded-lg shadow mb-3 cursor-pointer"
+          className="bg-(--light-bg) p-4 rounded-lg shadow mb-3 cursor-pointer"
         >
           <p className="font-semibold">Order Placed</p>
           <p className="text-sm text-gray-500">

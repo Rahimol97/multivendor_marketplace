@@ -41,12 +41,12 @@ const deliveryAddress = cart.deliveryAddress;
   },[user, dispatch, cart.deliveryAddress]);
 
   return (
-    <div className="bg-[rgb(244,244,244)] min-h-screen p-4">
+    <div className="bg-(--light-bg) min-h-screen p-4">
 
       {/* header */}
-      <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
+      <div className="fixed top-0 left-0 w-full bg-(--light-bg) z-50 shadow-sm">
         <div className="relative flex items-center justify-center h-14 px-4">
-          <button onClick={() => navigate(-1)} className="absolute left-4 bg-white p-2 rounded-full shadow">
+          <button onClick={() => navigate(-1)} className="absolute left-4 bg-(--light-bg) p-2 rounded-full shadow">
             <ArrowLeftIcon className="w-6 h-6" />
           </button>
 
@@ -80,9 +80,9 @@ const deliveryAddress = cart.deliveryAddress;
       </div>
 
       {/*cart  */}
-      <div className="mt-16 space-y-4">
+      <div className="mt-16 space-y-4 ">
         {cart.items.map(item => (
-          <div key={item.product_id._id} className="bg-white p-4 rounded-xl shadow">
+          <div key={item.product_id._id} className="bg-(--light-bg) p-4 rounded-xl shadow">
             <div className="flex gap-4">
               <img src={item.product_id.images?.[0]?.url} className="w-24 h-24 rounded-lg object-cover" />
               <div>
@@ -96,27 +96,27 @@ const deliveryAddress = cart.deliveryAddress;
       </div>
 
       {/* address*/}
-      <div className="bg-white mt-4 p-4 rounded-xl shadow flex justify-between items-center">
+      <div className="bg-(--light-bg) mt-4 p-4 rounded-xl shadow flex justify-between items-center">
         <div>
           <p className="font-bold">Deliver To</p>
           {deliveryAddress ? (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm ">
               {deliveryAddress.street}, {deliveryAddress.city}, {deliveryAddress.state} - {deliveryAddress.pincode}
               <div className="flex items-center gap-2 mt-1">
-                <PhoneIcon className="h-4 w-4 text-gray-500" />
+                <PhoneIcon className="h-4 w-4 " />
                 {mobile}
               </div>
             </div>
           ) : address?.length > 0 ? (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm ">
               {address[0].street}, {address[0].city}, {address[0].state} - {address[0].pincode}
               <div className="flex items-center gap-2 mt-1">
-                <PhoneIcon className="h-4 w-4 text-gray-500" />
+                <PhoneIcon className="h-4 w-4 " />
                 {mobile}
               </div>
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">No address selected</p>
+            <p className=" text-sm">No address selected</p>
           )}
         </div>
 
@@ -126,7 +126,7 @@ const deliveryAddress = cart.deliveryAddress;
       </div>
 
       {/* order summary */}
-      <div className="bg-white mt-4 p-4 rounded-xl shadow">
+      <div className="bg-(--light-bg) mt-4 p-4 rounded-xl shadow">
         <div className="flex justify-between"><span>Subtotal</span><span>₹{cart.subTotal}</span></div>
         <div className="flex justify-between text-green-600"><span>Discount</span><span>-₹{cart.discount}</span></div>
         <div className="flex justify-between text-red-600"><span>Tax</span><span>+₹{cart.tax}</span></div>
@@ -158,7 +158,7 @@ const deliveryAddress = cart.deliveryAddress;
         </div>
       )}
       {/* bottom  */}
-        <div className="fixed bottom-0 right-0 border-t border-t-slate-200  w-full bg-white z-40 shadow-sm">
+        <div className="fixed bottom-0 right-0 border-t border-t-slate-200  w-full bg-(--light-bg) z-40 shadow-sm">
         <div className="relative flex items-center  h-14 px-4">
          <p className="text-2xl font-semibold">₹{cart.grandTotal.toFixed(2)}</p>
           <button  onClick={() => navigate("/customer/product/payment", { state: { type: "cart" } })} className="absolute right-4 bg-(--dark-teal) px-3 py-2 text-white rounded-md shadow">Pay Now

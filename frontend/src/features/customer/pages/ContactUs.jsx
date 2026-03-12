@@ -45,14 +45,14 @@ function ContactUs() {
             Have questions, feedback, or need help? Our team is here for you.
           </p>
 
-          <div className="space-y-4 text-sm text-gray-700">
+          <div className="space-y-4 text-sm ">
             <p><strong>Email:</strong> support@multinest.com</p>
             <p><strong>Phone:</strong> +91 9800000000</p>
           </div>
         </div>
 
         {/* Contact Form */}
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow space-y-4">
+        <form onSubmit={handleSubmit} className="bg-(--light-bg) p-6 rounded-xl shadow space-y-4">
           <h3 className="text-xl font-semibold text-(--dark-teal)">Send Message</h3>
 
           <input

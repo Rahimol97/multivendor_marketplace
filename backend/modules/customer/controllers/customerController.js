@@ -10,7 +10,7 @@ import Review from '../models/review.js'
 import Commission from '../../admin/models/commissionModel.js'
 import OrderCommission from '../../admin/models/orderCommisionModel.js'
 import VendorCommission from '../../admin/models/vendorwiseCommissionModel.js'
-
+import Cart from '../models/customerCart.js'
 // export const createOrder = async (req, res) => {
 //   const session = await mongoose.startSession();
 
@@ -372,6 +372,34 @@ console.log(discount)
       })
     );
 
+    ////
+    // Remove ordered items from cart
+await Cart.updateOne(
+  { user_id: user_id },
+  {
+    $pull: {
+      items: {
+        product_id: { $in: productIds }
+      }
+    }
+  },
+  { session }
+);
+
+// Recalculate cart totals if items remain
+const cart = await Cart.findOne({ user_id }).session(session);
+
+if (cart && cart.items.length > 0) {
+  cart.subTotal = cart.items.reduce((sum, i) => sum + i.itemSubTotal, 0);
+  cart.discount = cart.items.reduce((sum, i) => sum + i.itemDiscount, 0);
+  cart.grandTotal = cart.items.reduce((sum, i) => sum + i.itemTotal, 0);
+
+  await cart.save({ session });
+} else {
+  // if cart empty delete it
+  await Cart.deleteOne({ user_id }, { session });
+}
+//////////////
     await session.commitTransaction();
     session.endSession();
 
@@ -413,7 +441,7 @@ const orders = await Order.find(filter)
 .sort({createdAt:-1}).skip(skip).limit(limit).lean();
 
 const orderids = orders.map((ids)=>ids._id);
- const orderitems = await OrderItem.find({order_id:{$in:orderids}}).populate("product_id", "name price sku").populate("vendor_id","shopName").lean();
+ const orderitems = await OrderItem.find({order_id:{$in:orderids}}).populate("product_id", "name price sku images").populate("vendor_id","shopName").lean();
 const orderwithitems = await orders.map((order)=>{
   return {
     ...order,items:orderitems.filter((item)=>item.order_id.toString()===order._id.toString()),
@@ -456,7 +484,7 @@ export const getvendororders = async(req,res)=>{
          const orderids = orders.map((order)=>order._id);
           //get order items vendor wise
           const orderitems  = await OrderItem.find({order_id:{$in:orderids},...itemfilter})
-          .populate("product_id","name price sku").lean();
+          .populate("product_id","name price sku images").lean();
       
           const orderwithitems= [];
           for(const order of orders){
@@ -503,7 +531,7 @@ export const getorderwisetrack = async(req,res)=>{
  const orders = await Order.find(orderfilter).populate("customer_id","customerName").sort({createdAt:-1}).skip(skip).limit(limit).lean();
  const orderids =orders.map((order)=>order._id);
  const orderitems=await OrderItem.find({order_id:{$in:orderids},...itemfilter})
- .populate("product_id", "name price sku").lean();
+ .populate("product_id", "name price sku images").lean();
 const orderwithitems =[];
 for(const order of orders){
   const items = await orderitems.filter((item)=>item.order_id.toString()===order._id.toString())
@@ -718,10 +746,23 @@ export const reviewproduct = async (req, res) => {
     const userId = req.loggedUser._id; // from auth middleware
 
     // Prevent duplicate review for same order+product
-    const existing = await Review.findOne({ orderId, productId, userId });
-    if (existing) return res.status(400).json({ message: "Already reviewed" });
+    let review = await Review.findOne({ orderId, productId, userId });
 
-    const review = await Review.create({ orderId, productId, userId, rating, comment });
+if (review) {
+      // Update existing review
+      review.rating = rating;
+      review.comment = comment;
+      await review.save();
+    } else {
+      // Create new review
+      review = await Review.create({
+        orderId,
+        productId,
+        userId,
+        rating,
+        comment,
+      });
+    }
 
     // Recalculate product rating
     const stats = await Review.aggregate([
@@ -741,6 +782,27 @@ export const reviewproduct = async (req, res) => {
     });
 
     res.status(201).json({ message: "Review added" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+///////getreview
+export const getReviewByOrderProduct = async (req, res) => {
+  try {
+    const { orderId, productId } = req.params;
+    const userId = req.loggedUser._id;
+
+    const review = await Review.findOne({
+      orderId,
+      productId,
+      userId,
+    });
+
+    if (!review) {
+      return res.status(404).json({ message: "No review found" });
+    }
+
+    res.status(200).json(review);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

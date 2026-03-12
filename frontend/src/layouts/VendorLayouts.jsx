@@ -2,12 +2,13 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import VendorSidebar from "../components/vendor/VendorSidebar";
 import Rolenasednavbar from "../components/common/Rolenasednavbar";
-
+import { VendorThemeProvider } from "../components/context/VendorThemeContext";
 function VendorLayouts() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
+     <VendorThemeProvider>
     <div className="flex w-full min-h-screen bg-(--primary) text-(--text) overflow-hidden">
       
       {/* Sidebar */}
@@ -30,6 +31,7 @@ function VendorLayouts() {
         </main>
       </div>
     </div>
+    </VendorThemeProvider>
   );
 }
 

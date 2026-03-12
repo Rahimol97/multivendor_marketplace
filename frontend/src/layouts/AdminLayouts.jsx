@@ -2,11 +2,13 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import AdminSidebar from "../components/admin/AdminSidebar";
 import Rolenasednavbar from "../components/common/Rolenasednavbar";
+import { AdminThemeProvider } from "../components/context/AdminThemeContext";
 function AdminLayouts() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
+      <AdminThemeProvider>
     <div className="flex w-full min-h-screen bg-(--primary) text-(--text) overflow-hidden">
       
       {/* Sidebar */}
@@ -29,6 +31,7 @@ function AdminLayouts() {
         </main>
       </div>
     </div>
+     </AdminThemeProvider>
   );
 }
 

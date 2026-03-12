@@ -71,8 +71,8 @@ const fetchRecentOrders = async () => {
   }
 };
   return (
-    <div style={{ background: colors.bg }} className="p-4 sm:p-6 min-h-screen">
-      <h1 className="text-xl sm:text-2xl font-bold mb-6" style={{ color: colors.dark }}>
+    <div  className="bg-(--light-bg) p-4 sm:p-6 min-h-screen">
+      <h1 className="text-xl sm:text-2xl font-bold mb-6 text-(--dark-teal)" >
         Vendor Dashboard
       </h1>
 
@@ -86,19 +86,19 @@ const fetchRecentOrders = async () => {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className=" p-4 rounded-xl shadow">
           <h2 className="font-semibold mb-3 text-sm sm:text-base">Sales Last 7 Days</h2>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={sales}>
               <XAxis dataKey="_id" fontSize={12} />
               <YAxis fontSize={12} />
               <Tooltip />
-              <Line type="monotone" dataKey="total" stroke={colors.mid} strokeWidth={2}/>
+              <Line type="monotone" dataKey="total" stroke="var(--mid-teal)" strokeWidth={2}/>
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white p-4 rounded-xl shadow">
+        <div className=" p-4 rounded-xl shadow">
           <h2 className="font-semibold mb-3 text-sm sm:text-base">Order Status</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
@@ -114,7 +114,7 @@ const fetchRecentOrders = async () => {
       </div>
 
       {/* Top Products */}
-      <div className="bg-white  p-4 rounded-xl shadow mb-8">
+      <div className="  p-4 rounded-xl shadow mb-8">
         <h2 className="font-semibold mb-3">Top Selling Products</h2>
         <div className="space-y-2 text-sm sm:text-base">
           {topProducts.map(p => (
@@ -127,7 +127,7 @@ const fetchRecentOrders = async () => {
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white p-4 rounded-xl shadow">
+      <div className=" p-4 rounded-xl shadow">
         <h2 className="font-semibold  mb-3">Recent Orders</h2>
         <div className="space-y-2 text-sm sm:text-base">
           {orders.map(o => (

@@ -43,11 +43,11 @@ function WishlistPage() {
     <div className="bg-(--light-bg) min-h-screen p-4 pb-10">
       
       {/* Header */}
-      <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
+      <div className="fixed top-0 left-0 w-full bg-(--light-bg) z-50 shadow-sm">
         <div className="relative flex items-center justify-center h-14 px-4">
           <button
             onClick={() => navigate(-1)}
-            className="absolute left-4 bg-white p-2 rounded-full shadow"
+            className="absolute left-4 bg-(--light-bg) p-2 rounded-full shadow"
           >
             <ArrowLeftIcon className="w-6 h-6" />
           </button>
@@ -66,7 +66,7 @@ function WishlistPage() {
           <div
             key={product._id}
             onClick={() => navigate(`/customer/product/${product._id}`)}
-            className="bg-white rounded-xl shadow p-2 relative cursor-pointer hover:shadow-md transition"
+            className="bg-(--light-bg) rounded-xl shadow p-2 relative cursor-pointer hover:shadow-md transition"
           >
             {/* Wishlist Heart */}
             <button

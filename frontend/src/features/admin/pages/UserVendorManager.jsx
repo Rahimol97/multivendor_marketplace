@@ -88,7 +88,7 @@ const limitc =1;
         {/* scroll */}
         <div className="w-full overflow-x-auto">
           <table className=" w-full text-sm whitespace-nowrap">
-            <thead  className="bg-gray-50">
+            <thead  className="bg-(--light-bg)">
               <tr className="text-left">
                 <th className="px-4 py-3">Username</th>
                 <th className="px-4 py-3">Customername</th>
@@ -152,7 +152,7 @@ const limitc =1;
         {/* scroll */}
         <div className="w-full overflow-x-auto">
           <table className=" w-full text-sm whitespace-nowrap">
-            <thead className="bg-gray-50" >
+            <thead className="bg-(--light-bg)" >
               <tr className="text-left">
                 <th className="px-4 py-3">Username</th>
                 <th className="px-4 py-3">shopname</th>

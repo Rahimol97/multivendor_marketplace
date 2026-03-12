@@ -6,6 +6,7 @@ import { getSocket  } from '../../socket'
 import { useAuth } from "../components/context/AuthContext";
 import { useDispatch } from "react-redux";
 import { setDeliveryAddress } from "../redux/cartSlice";
+import { CustomerThemeProvider } from "../components/context/CustomerThemeContext";
 function CustomerLayout() {
    const navigate = useNavigate();
      const { user,loading,customerAddress, customerMobile  } = useAuth();
@@ -54,6 +55,7 @@ useEffect(() => {
     };
   }, [user]);
   return (
+     <CustomerThemeProvider>
     <div className="flex w-full min-h-screen bg-(--primary) text-(--text) overflow-hidden">
       
 
@@ -69,6 +71,7 @@ useEffect(() => {
         </main>
       </div>
     </div>
+    </CustomerThemeProvider>
   );
 }
 

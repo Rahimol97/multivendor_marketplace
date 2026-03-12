@@ -26,10 +26,20 @@ function CartPage() {
 
   if (cart.items.length === 0) {
     return (
+       <div className="bg-(--light-bg) min-h-screen p-4 md:p-8">
+    
+    {/* Back Button */}
+    <button
+      onClick={() => navigate("/customer")}
+      className="fixed top-4 left-4 z-50 bg-white shadow-md rounded-full p-2 hover:bg-gray-100"
+    >
+      <ArrowLeftIcon className="w-6 h-6 text-gray-700" />
+    </button>
       <div className="max-w-4xl mx-auto p-10 text-center">
         <h2 className="text-2xl font-bold mb-4">Your Cart is Empty 🛒</h2>
         <p className="text-gray-500">Looks like you haven't added anything yet.</p>
       </div>
+        </div>
     );
   }
 
@@ -38,9 +48,9 @@ function CartPage() {
       {/* Back Button */}
       <button
         onClick={() => navigate("/customer")}
-        className="fixed top-4 left-4 z-50 bg-white shadow-md rounded-full p-2 hover:bg-gray-100"
+        className="fixed top-4 left-4 z-50 bg-(--light-bg) shadow-md rounded-full p-2 hover:bg-gray-100"
       >
-        <ArrowLeftIcon className="w-6 h-6 text-gray-700" />
+        <ArrowLeftIcon className="w-6 h-6 " />
       </button>
 
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 mt-10">
@@ -48,7 +58,7 @@ function CartPage() {
         {/* CART ITEMS */}
         <div className="md:col-span-2 space-y-4">
           {cart.items.map((item) => (
-            <div key={item.product_id._id} className="flex gap-4 bg-white p-4 rounded-xl shadow-sm">
+            <div key={item.product_id._id} className="flex gap-4 bg-(--light-bg) p-4 rounded-xl shadow-sm">
               <img
                 src={item.product_id.images?.[0]?.url}
                 className="w-24 h-24 object-cover rounded-lg"
@@ -107,7 +117,7 @@ function CartPage() {
 
 
         {/* order summary */}
-        <div className="bg-white p-6 rounded-xl shadow-md h-fit">
+        <div className="bg-(--light-bg) p-6 rounded-xl shadow-md h-fit">
           <h2 className="font-bold text-lg mb-4 text-(--dark-teal)">Order Summary</h2>
 
           <div className="flex justify-between mb-2">

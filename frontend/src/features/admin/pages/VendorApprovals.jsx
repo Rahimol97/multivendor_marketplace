@@ -64,7 +64,7 @@ const handleConfirmAction = async () => {
       <div className=" w-full min-w-0 bg-(--secondary) rounded-xl shadow-md overflow-hidden">
      <div className="w-full overflow-x-auto">
         <table className="w-full  text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-(--light-bg)">
             <tr className="text-left text-(--text)">
               <th className="px-4 py-3">Vendor</th>
               <th  className="px-4 py-3">Shop Name</th>

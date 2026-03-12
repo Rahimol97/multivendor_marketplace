@@ -15,20 +15,25 @@
   --light-bg: rgb(244, 244, 244);
 
 }
+/* Dark Mode (Alternative Colors) */
+.dark {
+  --primary: #222831;       
+  --secondary: #393E46;      
+  --accent: #00ADB5;        
+  --text: #EEEEEE;          
 
+  --dark-teal: rgb(0, 150, 160);   
+  --mid-teal: rgb(0, 200, 210);   
+  --bright-teal: rgb(0, 255, 240);  
+  --light-bg: #2c323a;              
+}
 body {
   font-family:  sans-serif !important;
   overflow-x:hidden;
 
 }
 
-/*  Dark Mode */
-.dark {
-  --primary: #222831;
-  --secondary: #393E46;
-  --accent: #00ADB5;
-  --text: #fcfcfc;
-}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

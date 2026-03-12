@@ -56,7 +56,7 @@ showToast(err.response.data.message, "success" );
     <div className='w-full min-w-0 rounded-lg shadow-md mt-6'>
            <div className='w-full overflow-x-auto'>
  <table className='text-sm w-full whitespace-nowrap'>
-   <thead  className="bg-gray-100">
+   <thead  className='bg-(--secondary) text-(--text) '>
     <tr>
          <th className='px-4 py-3'>Product</th>
          <th className='px-4 py-3'>category</th>

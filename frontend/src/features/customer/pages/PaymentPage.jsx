@@ -150,13 +150,13 @@ return (
     <div className="bg-(--light-bg) min-h-screen pb-24">
 
       {/* HEADER */}
-      <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
+      <div className="fixed top-0 left-0 w-full bg-(--light-bg) z-50 shadow-sm">
         <div className="relative flex items-center justify-center h-14 px-4">
           
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute left-4 bg-white p-2 rounded-full shadow"
+            className="absolute left-4 bg-(--light-bg) p-2 rounded-full shadow"
           >
             <ArrowLeftIcon className="w-6 h-6" />
           </button>
@@ -182,7 +182,7 @@ return (
      <div className="mt-16 p-4 space-y-4">
 
   {/* COD */}
-  <div className="bg-white p-4 rounded-xl shadow">
+  <div className="bg-(--light-bg) p-4 rounded-xl shadow">
     <label className="flex items-center gap-3 cursor-pointer">
       <input
         type="radio"
@@ -197,7 +197,7 @@ return (
   </div>
 
   {/* razorpay */}
-  <div className="bg-white p-4 rounded-xl shadow ">
+  <div className="bg-(--light-bg) p-4 rounded-xl shadow ">
     <label className="flex items-center gap-3 cursor-pointer">
       <input
         type="radio"
@@ -224,7 +224,7 @@ return (
 </div>
 
 
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-md p-4 flex justify-between items-center">
+      <div className="fixed bottom-0 left-0 w-full bg-(--light-bg) border-t shadow-md p-4 flex justify-between items-center">
         <p className="text-xl font-bold">₹{amount.toFixed(2)}</p>
         <button onClick={handlePayment} className="bg-[rgb(1,135,144)] text-white cursor-pointer px-6 py-2 rounded-lg font-semibold shadow">
           Pay Now

@@ -6,7 +6,6 @@ import AuthProvider from "./components/context/AuthContext";
 import axios from "axios";
 import {store} from './redux/store'
 import { Provider } from "react-redux";
-
 axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById("root")).render(

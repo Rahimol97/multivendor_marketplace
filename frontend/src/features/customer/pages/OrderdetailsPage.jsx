@@ -65,14 +65,14 @@ socket.emit("joinOrderRoom", order.customer_id);
     );
   }    
    return (
-    <div className="p-4 bg-gray-100 min-h-screen">
-     <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
+    <div className="p-4 bg-(--light-bg) min-h-screen">
+     <div className="fixed top-0 left-0 w-full bg-(--light-bg) z-50 shadow-sm">
        <div className="relative flex items-center justify-center h-14 px-4">
      
          {/* Back Button  */}
          <button
            onClick={() => navigate(-1)}
-           className="absolute left-4 bg-white p-2 rounded-full shadow"
+           className="absolute left-4 bg-(--light-bg) p-2 rounded-full shadow"
          >
            <ArrowLeftIcon className="w-6 h-6" />
          </button>
@@ -82,14 +82,14 @@ socket.emit("joinOrderRoom", order.customer_id);
      </div>
       <h2 className="text-lg font-bold mb-7 mt-14">Order Tracking</h2>
 
-      <div className="bg-white p-4 rounded-lg shadow mb-4">
+      <div className="bg-(--light-bg) p-4 rounded-lg shadow mb-4">
         <p className="font-semibold">Order ID: {order.orderNumber}</p>
         <p>Status: {order.orderStatus}</p>
         <p>Total: ₹{order.grandTotal.toFixed(2)}</p>
       </div>
 
    {vendors.map(v => (
-  <div key={v._id} className="bg-white p-4 rounded-lg shadow mb-4">
+  <div key={v._id} className="bg-(--light-bg) p-4 rounded-lg shadow mb-4">
     
     <p className="font-semibold text-lg">Seller: {v.vendor_id.shopName}</p>
     <p className="text-sm mb-2">Status: <span className="capitalize">{v.orderStatus}</span></p>

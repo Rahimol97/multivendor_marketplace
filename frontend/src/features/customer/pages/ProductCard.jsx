@@ -55,7 +55,7 @@ const decreaseQty = (e) => {
   return (
  
     <div onClick={()=>navigate(`/customer/product/${product._id}`)}
-      className={`bg-white cursor-pointer rounded-2xl shadow-sm p-3 group transition-all duration-300
+      className={` cursor-pointer rounded-2xl shadow-sm p-3 group transition-all duration-300
       ${outOfStock ? "opacity-60 grayscale pointer-events-none" : "hover:shadow-xl hover:-translate-y-1"}`}
     >
       {/* image + discount */}

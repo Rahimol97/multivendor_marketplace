@@ -33,7 +33,7 @@ export default function AdminContactMessages() {
     <div className="p-6 bg-(--light-bg) min-h-screen">
       <h1 className="text-2xl font-bold text-(--dark-teal) mb-6">Contact Messages</h1>
 
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
+      <div className="bg-(--light-bg) rounded-xl shadow overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-(--mid-teal) text-white">
             <tr>

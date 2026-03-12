@@ -10,14 +10,16 @@ import {
   ChevronDownIcon,
   ViewColumnsIcon,
   ChevronLeftIcon,
-  RectangleGroupIcon 
+  RectangleGroupIcon,
+  SunIcon, MoonIcon 
 } from "@heroicons/react/24/outline";
-
+import { useAdminTheme } from "../context/AdminThemeContext"
 function AdminNavbar({ collapsed, setCollapsed, setMobileOpen }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const { user,setUser, loading }= useAuth();
   const navigate = useNavigate();
+  const { darkMode, toggleTheme } = useAdminTheme();
 if (loading) return null;
   const handlelogout =async()=>{
    
@@ -55,6 +57,17 @@ if (loading) return null;
 
         {/* DESKTOP RIGHT */}
         <div className="hidden md:flex items-center gap-3 cursor-pointer">
+        
+        <button
+  onClick={toggleTheme}
+  className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+>
+  {darkMode ? (
+    <SunIcon className="w-6 h-6 text-yellow-400" />
+  ) : (
+    <MoonIcon className="w-6 h-6 text-(--accent)" />
+  )}
+</button>
         <button onClick={subadminregister} className="bg-(--accent) px-4 py-2 text-(--secondary) rounded-2xl hover:text-amber-300 cursor-pointer">subadmin</button>
           <div className="relative">
             <button
@@ -78,6 +91,23 @@ if (loading) return null;
           </div>
         </div>
         {/* MOBILE MENU BUTTON */}
+        <div className="md:hidden flex items-center gap-3">
+                  <button
+      onClick={toggleTheme}
+      className=" md:hidden flex items-center gap-2 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 w-full"
+    >
+      {darkMode ? (
+        <>
+          <SunIcon className="w-6 h-6 text-yellow-400" />
+         
+        </>
+      ) : (
+        <>
+          <MoonIcon className="w-6 h-6 text-(--accent)" />
+         
+        </>
+      )}
+    </button>
         <button
           className="md:hidden text-(--accent)"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -88,6 +118,7 @@ if (loading) return null;
             <Bars3Icon className="w-7 h-7 cursor-pointer" />
           )}
         </button>
+        </div>
       </div>
       {/* MOBILE DROPDOWN MENU */}
       {menuOpen && (
@@ -96,6 +127,17 @@ if (loading) return null;
             <UserCircleIcon className="w-8 h-8 text-(--accent)" />
             <span className="font-medium">{user?.username }</span>
           </div>
+   
+    {/* Subadmin Button */}
+    <button
+      onClick={subadminregister}
+      className="w-full bg-(--accent) px-4 py-2 text-(--secondary) rounded-xl"
+    >
+      Subadmin
+    </button>
+
+  
+ 
         </div>
       )}
     </header>

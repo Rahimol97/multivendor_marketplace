@@ -7,19 +7,20 @@ import {
   XMarkIcon,
   HomeIcon,
   ClipboardDocumentListIcon,
+  SunIcon, MoonIcon
 } from "@heroicons/react/24/outline";
 import {useDispatch, useSelector} from "react-redux";
 import { setSearch, fetchProducts } from "../../redux/productSlice";
 import {useAuth} from '../context/AuthContext'
 import api from '../../api'
 import { Link ,useNavigate} from "react-router-dom";
-
+import { useCustomerTheme } from "../context/CustomerThemeContext";
 function CustomerNavbar() {
   const [showFooter, setShowFooter] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const dispatch = useDispatch();
     const navigate = useNavigate();
-  
+  const { darkMode, toggleTheme } = useCustomerTheme();
     const { user,setUser, loading }= useAuth();
   
   const search = useSelector((state) => state.products.search);
@@ -77,9 +78,22 @@ function CustomerNavbar() {
             </div>
             <span className="text-lg font-bold tracking-wide">MultiNest</span>
           </div>
+ <button
+    onClick={toggleTheme}
+    className="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+  >
+    {darkMode ? (
+      <SunIcon className="w-6 h-6 text-yellow-400" />
+    ) : (
+      <MoonIcon className="w-6 h-6 text-white" />
+    )}
+  </button>
 
           {/* search bar */}
           <div className="hidden md:flex flex-1 mx-8">
+           
+  
+            
             <div className="w-full relative">
               <input
                 type="text" value={search}
@@ -96,6 +110,16 @@ function CustomerNavbar() {
 
           {/* rightside links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
+           <button
+    onClick={toggleTheme}
+    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+  >
+    {darkMode ? (
+      <SunIcon className="w-6 h-6 text-yellow-400" />
+    ) : (
+      <MoonIcon className="w-6 h-6 text-(--bright-teal)" />
+    )}
+  </button>
             <Link to ="/customer" className="hover:text-(--bright-teal) cursor-pointer">Home </Link> 
             <Link to ="/customer/contactus" className="hover:text-(--bright-teal) cursor-pointer">Contact Us </Link> 
            <Link to ="/customer/aboutus"  className="hover:text-(--bright-teal) cursor-pointer">About Us</Link> 

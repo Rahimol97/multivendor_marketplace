@@ -31,7 +31,7 @@ useEffect(() => {
   }
 }, [user]);
   return(
-<div className="w-full bg-white rounded-t-2xl shadow-lg p-4 animate-slideUp">
+<div className="w-full bg-(--light-bg) rounded-t-2xl shadow-lg p-4 animate-slideUp">
       <div className="flex justify-between mb-3">
         <h2 className="font-bold">Select Address</h2>
         <button onClick={onClose}>✕</button>
@@ -47,7 +47,7 @@ useEffect(() => {
     
     <label
   className={`flex items-start gap-3 p-3 rounded cursor-pointer border transition
-    ${selected === addr._id ? "border-teal-500 bg-teal-50" : "border-gray-200 hover:bg-gray-50"}
+    ${selected === addr._id ? "border-teal-500 bg-(--light-bg)" : "border-gray-200 hover:bg-gray-50"}
   `}
 >
       
@@ -59,8 +59,8 @@ useEffect(() => {
         className="mt-1"
       />
 
-      <div className="flex-1 text-sm text-gray-700">
-        <p className="font-medium text-gray-800">Delivery Address</p>
+      <div className="flex-1 text-sm ">
+        <p className="font-medium ">Delivery Address</p>
         <p>
           {addr.street}, {addr.city}, {addr.state} - {addr.pincode}
         </p>
@@ -79,7 +79,7 @@ useEffect(() => {
   </div>
 ))}
 
-      <button onClick={choosedeliveraddr} className="w-full mt-4 bg-[rgb(1,135,144)] text-white py-3 rounded">
+      <button onClick={choosedeliveraddr} className="w-full mt-4 bg-[rgb(1,135,144)] text-(--light-bg) py-3 rounded">
         Deliver to this address
       </button>
     </div>

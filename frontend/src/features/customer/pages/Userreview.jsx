@@ -1,4 +1,4 @@
-import React,{ useState } from 'react'
+import React,{ useState,useEffect } from 'react'
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../api";
 import { StarIcon } from "@heroicons/react/24/solid";
@@ -10,7 +10,7 @@ function Userreview() {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
-  
+  const [review, setReview] = useState(null);
   const submitReview = async () => {
     if (rating === 0) return alert("Please select a rating");
 
@@ -24,6 +24,22 @@ function Userreview() {
     alert("Review submitted!");
     navigate(-1);
   };
+
+  useEffect(() => {
+  fetchReview();
+}, []);
+const fetchReview = async () => {
+  try {
+    const res = await api.get(
+      `/customer/getreview/${orderid}/${productid}`
+    );
+    setReview(res.data);
+    setRating(res.data.rating);
+    setComment(res.data.comment);
+  } catch (err) {
+    console.log("No existing review");
+  }
+};
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
          <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm">
@@ -60,7 +76,7 @@ function Userreview() {
 
         {/* Comment */}
         <textarea
-          className="w-full border border-slate-100 rounded-md p-2 mb-4"
+          className="w-full border border-slate-100 rounded-md p-2 mb-4 focus:outline-none"
           rows="3"
           placeholder="Write your review..."
           value={comment}
@@ -69,7 +85,7 @@ function Userreview() {
 
         <button
           onClick={submitReview}
-          className="w-full bg-(--accent) text-white py-2 rounded-md font-semibold"
+          className="w-full bg-(--accent) text-white py-2 rounded-md font-semibold cursor-pointer"
         >
           Submit Review
         </button>
