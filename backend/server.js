@@ -44,7 +44,7 @@ export { io }; // make available to controllerss
 
 app.use(cookieParser());
 app.use(cors({
-  origin:"http://localhost:5173",
+  origin:"https://multivendor-marketplace-flax.vercel.app",
   credentials: true
 })); 
 app.use(express.json());
